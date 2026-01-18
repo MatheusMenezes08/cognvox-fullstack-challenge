@@ -1,0 +1,51 @@
+.app-root {
+  min-height: 100vh;
+}
+
+.app-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  gap: 12px;
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.app-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.app-nav a:hover {
+  text-decoration: underline;
+}
+
+.app-nav-button {
+  margin-left: auto;
+  border: 0;
+  background: #d9534f;
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.app-nav-button:hover {
+  opacity: 0.9;
+}
+
+.login-status {
+  margin-top: 12px;
+  color: #1c1c1c;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  background: #fff3cd;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ffeeba;
+}
+

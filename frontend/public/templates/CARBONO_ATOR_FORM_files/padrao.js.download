@@ -1,0 +1,3174 @@
+/*
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  FocusPrimeiroItem( indexForm )
+{
+	try
+	{
+		if ( document.forms.length > 0 )
+		{
+			for ( i = 0; i <= document.forms[indexForm].length; i++ )
+			{
+				if ( document.forms[indexForm][i].type != "hidden" && document.forms[indexForm][i].disabled == false )
+				{
+					document.forms[indexForm][i].focus();
+					i = document.forms[indexForm].length + 1;
+				}
+			}
+		}
+	}
+	catch( e  )
+	{
+		
+	}
+}
+
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+if (document.getElementById("myCarousel")){
+  $('.carousel').carousel({
+    pause: true,
+    interval: false,
+    touch: true // default
+  })
+}
+
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+if (document.getElementById("iniciasessao")){
+$('#iniciasessao').click(
+function (e) {
+    e.preventDefault();              
+    $.confirmModal('Você está prestes a iniciar uma sessão videográfica com um aluno/paciente.', 
+function (el) {
+      janela('https://video.cognvox.net/',800,500);
+    });
+});    
+}
+
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+if(document.getElementById("formulario")){
+  $("#formulario").submit(
+function () {
+    var formData = new FormData(this);
+    
+    $.ajax({
+        url: '/md_arquivos/upload/',
+        type: 'POST',
+        data: formData,
+        success: function (data) {
+            alert(data)
+        },
+        cache: false,
+        contentType: false,
+        processData: false,
+        xhr: function () { // Custom XMLHttpRequest
+            var myXhr = $.ajaxSettings.xhr();
+            if (myXhr.upload) { // Avalia se tem suporte a propriedade upload
+                myXhr.upload.addEventListener('progress', function () {
+                    /* faz alguma coisa durante o progresso do upload */
+                }, false);
+            }
+            return myXhr;
+        }
+    });
+
+  });
+}
+
+
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  valida_escolha_selecao(strComboSessao,strIdForm){
+  if($("#"+strComboSessao).val() == '' || $("#"+strComboSessao).val() == '-1' ){
+      msgmodal('AVISO!', 'Antes de fazer uma consulta, selecione um estudante e uma sessão.<br>Esses campos são obrigatórios!', '')
+  }else{
+      $('#'+strIdForm).submit();
+  }
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  msgmodal(strTitulo, strMsg, strURL) {
+  $('#modalMsg').modal('toggle');
+  $('#modal-title').html(strTitulo);
+  $('#modal-body').html(strMsg);
+  if(strURL!==''){
+    $('#modal-body').load(strURL);
+  }
+}
+
+
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  envia_form(strID,strURL,strIdDestino){
+  var dados = $('#'+strID).serialize();
+  //console.log(dados)
+  $.ajax({
+      //enctype: 'multipart/form-data',
+      url: strURL,
+      type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+      data: dados,
+      success: function (resposta){
+        //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+        if (strIdDestino!=''){
+          $('#'+strIdDestino).html(resposta);
+        }else{
+          console.log(resposta);
+        }
+      },
+      error: function (resposta){
+        //Entrará aqui caso não de certo a requisição 
+        //console.log('Erro no processamento!');
+        $('#'+strIdDestino).html(resposta);
+        //console.log(resposta);
+      }
+  })
+}
+
+/* 
+* 
+*@description 	Função para adicionar uma opção a um elemento SELECT.
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          18/11/2024
+* @param {string} selectId - O ID do elemento SELECT.
+* @param {string} texto - O texto a ser exibido na opção.
+* @param {string} valor - O valor da opção.
+*/
+function atualizarSelect(selectId, dados) {
+    // Obtém o elemento SELECT pelo ID
+    const select = document.getElementById(selectId);
+
+    // Limpa o conteúdo do SELECT
+    select.innerHTML = '';
+    //console.log(dados);
+    // Adiciona uma opção padrão
+    const opcaoPadrao = document.createElement("option");
+    if (dados == '0') {
+      opcaoPadrao.text = "Nao localizado!";
+      opcaoPadrao.value = -1;
+    }else{
+      opcaoPadrao.text = "Selecione uma opção";
+      opcaoPadrao.value = 0;
+    }
+    select.add(opcaoPadrao);
+
+    // Popula o SELECT com novos dados
+    dados.forEach(item => {
+        const novaOpcao = document.createElement("option");
+        novaOpcao.text = item.texto;
+        novaOpcao.value = item.valor;
+        select.add(novaOpcao);
+    });
+
+    //console.log("SELECT atualizado com sucesso!");
+}
+
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  montacombo(strIdDestino,strModulo,strMetodo,strFiltro){
+//////console.log('entrou');
+$.ajax({
+    url: '/includes/montacombo.asp',
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+      'strDestino':strIdDestino,
+      'strModulo':strModulo,
+      'strMetodo':strMetodo,
+      'strFiltro':strFiltro},
+    success:function (resposta){
+      //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+      jdados = JSON.parse(resposta);
+      //console.log(jdados);
+      atualizarSelect(strIdDestino, jdados)
+      //strIdDestino = '#'+strIdDestino
+      //$(strIdDestino).html(resposta)
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+      console.log('Erro no processamento!');
+      //console.log(resposta);
+
+    }
+});
+}
+
+
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  montacampo(strDestino,strModulo,strMetodo,strFiltro){
+$.ajax({
+    url: '/includes/montacampo.asp',
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+      'strDestino':strDestino,
+      'strModulo':strModulo,
+      'strMetodo':strMetodo,
+      'strFiltro':strFiltro},
+    success: function (resposta){
+      //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+      strDestino = '#'+strDestino
+
+      $(strDestino).val(resposta)
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+      ////console.log('Erro no processamento!');
+    }
+})
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  responsavel(strDestino,strCampo,idatorDi){
+  // ////console.log('entrou');
+  // ////console.log('Destino:'+strDestino)
+  // ////console.log('atorDi:'+idatorDi)
+  $.ajax({
+      url: '/includes/responsavel.asp',
+      type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+      data: {
+        'strDestino':strDestino,
+        'strCampo':strCampo,
+        'idatorDi':idatorDi
+        },
+      success: function (resposta){
+        //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+        // ////console.log(resposta)
+        strDestino = '#'+strDestino
+        // ////console.log(strDestino)
+        $(strDestino).val(resposta)
+      },
+      error: function (resposta){
+        //Entrará aqui caso não de certo a requisição 
+        ////console.log('Erro no processamento!');
+      }
+  })
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  montagrid(strIdDestino,strDestino,strModulo,strMetodo,strFiltro,strAction){
+$.ajax({
+    url: '/includes/montagrid.asp',
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+      'strDestino':strDestino,
+      'strModulo':strModulo,
+      'strMetodo':strMetodo,
+      'strFiltro':strFiltro,
+      'strAction':strAction
+      },
+    success: function (resposta){
+      //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+      //////console.log(resposta)
+      strIdDestino = '#'+strIdDestino
+      $(strIdDestino).html(resposta)
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+      console.log('Erro no processamento!');
+    }
+})
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  montagridprincipal(strIdDestino,strDestino,strModulo,strMetodo,strFiltro,strAction){
+  $.ajax({
+      url: '/includes/montagrid_principal.asp',
+      type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+      data: {
+        'strDestino':strDestino,
+        'strModulo':strModulo,
+        'strMetodo':strMetodo,
+        'strFiltro':strFiltro,
+        'strAction':strAction
+        },
+      success: function (resposta){
+        //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+        //////console.log(resposta)
+        strIdDestino = '#'+strIdDestino
+        $(strIdDestino).html(resposta)
+      },
+      error: function (resposta){
+        //Entrará aqui caso não de certo a requisição 
+        console.log('Erro no processamento!');
+      }
+  })
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  MONTACARDALUNO(intIdAluno,strIdDestino,strExibeSecao){
+// ////console.log('entrou');
+$.ajax({
+    url: '/includes/card_aluno.asp',
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+      'intIdAluno':intIdAluno,
+      'strExibeSecao':strExibeSecao
+      },
+    success: function (resposta){
+      //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+      // ////console.log(resposta)
+      strDestino = '#'+strIdDestino
+
+      $(strDestino).html(resposta)
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+      ////console.log('Erro no processamento!');
+    }
+})
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  carregaDadosSala(){
+    //document.getElementById("NUMEROSESSAO").value=document.getElementById('CMBNUMEROSESSAO').value;
+    if (document.getElementById("UNIDADEID")){
+        document.getElementById("UNIDADE").value=document.getElementById('UNIDADEID').value;
+    }
+    if (document.getElementById("ATORDIID")){
+        document.getElementById("ATORALUNOID").value=document.getElementById('ATORDIID').value;
+    }
+    if (document.getElementById("TURNOID")){
+        document.getElementById("TURNO").value=document.getElementById('TURNOID').value;
+    }
+    if (document.getElementById("TURMAID")){
+        document.getElementById("TURMA").value=document.getElementById('TURMAID').value;
+    }
+    if (document.getElementById("ANOID")){
+        document.getElementById("ANO").value=document.getElementById('ANOID').value;
+    }
+    if (document.getElementById("RESPONSAVEL1")){
+        document.getElementById("ATORRESPONSAVELID").value=document.getElementById('RESPONSAVEL1').value;
+    }
+}
+
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+// async function  carregaPagina(strDestino,strURL,strParametro1,strParametro2,strParametro3){
+//     let myPromise = new Promise(function (myResolve, myReject) {
+//       $.ajax({
+//           url: strURL,
+//           type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+//           data: {
+//             'strDestino':strDestino,
+//             'strAction':'<%'=request.form("action")%>',
+//             'ACTION':'<%'=request.form("action")%>',
+//             'strParametro1':strParametro1,
+//             'strParametro2':strParametro2,
+//             'strParametro3':strParametro3,
+//             },
+//           success: function (resposta){
+//             //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+//             // ////console.log(resposta)
+//             myResolve(resposta);
+//           },
+//           error: function (resposta){
+//             //Entrará aqui caso não de certo a requisição 
+//             ////console.log('Erro no processamento!');
+//           }
+//       })
+//   });
+//   //document.getElementById("demo").innerHTML = await myPromise;
+//   $('#'+strDestino).html(await myPromise);
+//} 
+
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  submetePagina(strDestino,strURL,strSessaoId,strAlunoId,strParametro1,strParametro2,strParametro3){
+
+  var form = $('<form action="' + strURL + '" method="post">' +
+                  '<input type="hidden" name="NUMEROSESSAO" value="' + strSessaoId + '" />' +
+                  '<input type="hidden" name="ATORALUNOID" value="' + strAlunoId + '" />' +
+                  '<input type="hidden" name="strParametro1" value="' + strParametro1 + '" />' +
+                  '<input type="hidden" name="strParametro2" value="' + strParametro2 + '" />' +
+                  '<input type="hidden" name="strParametro3" value="' + strParametro3 + '" />' +
+                  '</form>');
+  $('body').append(form);
+    form.submit();
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  submetePaginaParaJanela(strDestino,strURL,strSessaoId,strAlunoId,strParametro1,strParametro2,strParametro3){
+
+  var form = $('<form action="' + strURL + '" method="post" target="_blank">' +
+                   '<input type="hidden" name="NUMEROSESSAO" value="' + strSessaoId + '" />' +
+                   '<input type="hidden" name="ATORALUNOID" value="' + strAlunoId + '" />' +
+                   '<input type="hidden" name="strParametro1" value="' + strParametro1 + '" />' +
+                   '<input type="hidden" name="strParametro2" value="' + strParametro2 + '" />' +
+                   '<input type="hidden" name="strParametro3" value="' + strParametro3 + '" />' +
+                   '</form>');
+  $('body').append(form);
+    form.submit();  
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  registra_resposta_questionario(strDestino,strAction,strURL,stratoralunoid,strperguntaid,stridresposta,strTipo){
+
+    $.ajax({
+      url: strURL,
+      async: true,
+      type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+      data: {
+        'strDestino':strDestino,
+        'actions':strAction,
+        'atoralunoid':stratoralunoid,
+        'perguntaid':strperguntaid,
+        'idresposta':stridresposta,
+        'strTipo':strTipo,
+        },
+       success:function (resposta){
+        //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+        //console.log(resposta)
+        //strDestino = '#'+strDestino
+        // ////console.log(strDestino)
+        $(strDestino).html(resposta)
+      },
+      error: function (resposta){
+        //Entrará aqui caso não de certo a requisição 
+        //console.log('Erro no processamento!');
+        ////console.log(resposta)
+      }
+  }) 
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  carregaPagina(strDestino,strURL,strParametro1,strParametro2,strParametro3){
+$.ajax({
+    url: strURL,
+    async: true,
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+      'strDestino':strDestino,
+      'strAction':'<%=request.form("action")%>',
+      'ACTION':'<%=request.form("action")%>',
+      'strParametro1':strParametro1,
+      'strParametro2':strParametro2,
+      'strParametro3':strParametro3,
+      },
+    success: function (resposta){
+      //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+      strDestino = '#'+strDestino
+      // ////console.log(strDestino)
+      $(strDestino).html(resposta)
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+      ////console.log(resposta)
+      $(strDestino).html(resposta)
+    }
+})
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  carrega_menu(strSessao,intAluno,intLink){
+//console.log('carrega_menu:strSessao'+strSessao,'intAluno:'+intAluno,'intLink:'+intLink)
+switch(intLink) {
+  ////////////////////////////////////////   análise da sessão   ////////////////////////////////////////////
+  case 1:
+    // code block
+        document.getElementById("textosframedirecionamento").style.display = "none";
+        document.getElementById("textosframecompreencao").style.display = "none";
+        document.getElementById("textosframe").style.display = "none";
+        document.getElementById("caixadosbotoesfuncionais").style.display = "none";
+        document.getElementById("caixa_video").style.display = "none";
+        document.getElementById("checkcompreencao").style.display = "none";
+        document.getElementById("caixaresumoframe").style.display = "none";
+        document.getElementById("BoxFrames").style.display = "none";
+        document.getElementById("textosframeturnofala").style.display = "none";
+        document.getElementById("textosframegestosobservados").style.display = "none";    
+        document.getElementById("textosframecritica").style.display = "none";          
+        document.getElementById("navegamenu").style.display = "block";
+        document.getElementById("checkindicadoresdiscursivos").style.display = "none";
+        document.getElementById("checkindicadoresgestuais").style.display = "none";
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_SESSAO.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/INCLUDES/BOX_CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        //carregaPagina('navegamenu','/md_QUADRO_PSICOPEDAGOGICO/quadro_psicopedagogico.asp',strSessao,intAluno,intLink)
+        break;
+      case 2:
+        // code block
+        //document.getElementById("textosframe").style.display = "block";
+        document.getElementById("caixadosbotoesfuncionais").style.display = "block";
+        document.getElementById("caixa_video").style.display = "block";
+        // document.getElementById("checkcompreencao").style.display = "block";
+         document.getElementById("caixaresumoframe").style.display = "block";
+         document.getElementById("BoxFrames").style.display = "block";
+        // document.getElementById("textosframeturnofala").style.display = "block";
+        // document.getElementById("textosframegestosobservados").style.display = "block";    
+        // document.getElementById("textosframecritica").style.display = "block";          
+        document.getElementById("navegamenu").style.display = "none";
+        // document.getElementById("checkindicadoresdiscursivos").style.display = "block";
+        // document.getElementById("checkindicadoresgestuais").style.display = "block";
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_SESSAO.asp',strSessao,intAluno,2)
+        intFrame = document.getElementById("frameid").value
+        valida_campos(strSessao,intAluno,intFrame)
+
+        break;
+      case 3:
+        // code block
+        submetePagina('','/md_pratica_pedagogica/pratica_pedagogica.asp',strSessao,intAluno,'','','')
+        
+        break;
+      case 4:
+        // code block
+        submetePagina('','/md_indicadores/avaliacao_indicadores.asp',strSessao,intAluno,'','',19)
+        break;
+      case 5:
+        // code block
+        document.getElementById("textosframe").style.display = "none";
+        document.getElementById("caixadosbotoesfuncionais").style.display = "none";
+        document.getElementById("caixa_video").style.display = "none";
+        document.getElementById("checkcompreencao").style.display = "none";
+        document.getElementById("caixaresumoframe").style.display = "none";
+        document.getElementById("BoxFrames").style.display = "none";
+        document.getElementById("textosframeturnofala").style.display = "none";
+        document.getElementById("textosframegestosobservados").style.display = "none";    
+        document.getElementById("textosframecritica").style.display = "none";          
+        document.getElementById("navegamenu").style.display = "block";
+        document.getElementById("checkindicadoresdiscursivos").style.display = "none";
+        document.getElementById("checkindicadoresgestuais").style.display = "none";
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_SESSAO.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_MICRO_ANALISE/micro_analise.asp',strSessao,intAluno,intLink)
+        break;
+      case 6:
+        // code block
+        document.getElementById("textosframedirecionamento").style.display = "none";
+        document.getElementById("textosframecompreencao").style.display = "none";
+        document.getElementById("textosframe").style.display = "none";
+        document.getElementById("caixadosbotoesfuncionais").style.display = "none";
+        document.getElementById("caixa_video").style.display = "none";
+        document.getElementById("checkcompreencao").style.display = "none";
+        document.getElementById("caixaresumoframe").style.display = "none";
+        document.getElementById("BoxFrames").style.display = "none";
+        document.getElementById("textosframeturnofala").style.display = "none";
+        document.getElementById("textosframegestosobservados").style.display = "none";    
+        document.getElementById("textosframecritica").style.display = "none";          
+        document.getElementById("navegamenu").style.display = "block";
+        document.getElementById("checkindicadoresdiscursivos").style.display = "none";
+        document.getElementById("checkindicadoresgestuais").style.display = "none";
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_SESSAO.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_MICRO_ANALISE/micro_analise.asp',strSessao,intAluno,intLink)
+        break;
+      case 7:
+        // code block
+        document.getElementById("textosframedirecionamento").style.display = "none";
+        document.getElementById("textosframecompreencao").style.display = "none";
+        document.getElementById("textosframe").style.display = "none";
+        document.getElementById("caixadosbotoesfuncionais").style.display = "none";
+        document.getElementById("caixa_video").style.display = "none";
+        document.getElementById("checkcompreencao").style.display = "none";
+        document.getElementById("caixaresumoframe").style.display = "none";
+        document.getElementById("BoxFrames").style.display = "none";
+        document.getElementById("textosframeturnofala").style.display = "none";
+        document.getElementById("textosframegestosobservados").style.display = "none";    
+        document.getElementById("textosframecritica").style.display = "none";          
+        document.getElementById("navegamenu").style.display = "block";
+        document.getElementById("checkindicadoresdiscursivos").style.display = "none";
+        document.getElementById("checkindicadoresgestuais").style.display = "none";
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_SESSAO.asp',strSessao,intAluno,intLink)
+        //carregaPagina('navegamenu','/md_MACRO_ANALISE/macro_analise.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_CHAT_PRATICAS/chat_praticas.asp',strSessao,intAluno,intLink)
+        break;
+        break;
+      case 8:
+        // code block
+        document.getElementById("textosframedirecionamento").style.display = "none";
+        document.getElementById("textosframecompreencao").style.display = "none";
+        document.getElementById("textosframe").style.display = "none";
+        document.getElementById("caixadosbotoesfuncionais").style.display = "none";
+        document.getElementById("caixa_video").style.display = "none";
+        document.getElementById("checkcompreencao").style.display = "none";
+        document.getElementById("caixaresumoframe").style.display = "none";
+        document.getElementById("BoxFrames").style.display = "none";
+        document.getElementById("textosframeturnofala").style.display = "none";
+        document.getElementById("textosframegestosobservados").style.display = "none";    
+        document.getElementById("textosframecritica").style.display = "none";          
+        document.getElementById("navegamenu").style.display = "block";
+        document.getElementById("checkindicadoresdiscursivos").style.display = "none";
+        document.getElementById("checkindicadoresgestuais").style.display = "none";
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_SESSAO.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_SINTESE_OBSERVACAO/sintese_observacao.asp',strSessao,intAluno,intLink)
+
+        break;
+      case 9:
+        // code block
+        document.getElementById("textosframedirecionamento").style.display = "none";
+        document.getElementById("textosframecompreencao").style.display = "none";
+        carregaPagina('navegamenu','/md_CONFIGURACOES_CONTEXTUAIS/graficos_analiticos.asp',strSessao,intAluno,intLink)
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_SESSAO.asp',strSessao,intAluno,intLink)
+        //carregaPagina('navegamenu','/md_CONFIGURACOES_CONTEXTUAIS/graficos_analiticos.asp',strSessao,intAluno,intLink)
+        document.getElementById("textosframe").style.display = "none";
+        document.getElementById("caixadosbotoesfuncionais").style.display = "none";
+        document.getElementById("caixa_video").style.display = "none";
+        document.getElementById("checkcompreencao").style.display = "none";
+        document.getElementById("caixaresumoframe").style.display = "none";
+        document.getElementById("BoxFrames").style.display = "none";
+        document.getElementById("textosframeturnofala").style.display = "none";
+        document.getElementById("textosframegestosobservados").style.display = "none";    
+        document.getElementById("textosframecritica").style.display = "none";          
+        document.getElementById("checkindicadoresdiscursivos").style.display = "none";
+        document.getElementById("checkindicadoresgestuais").style.display = "none";
+        document.getElementById("navegamenu").style.display = "block";
+        break;
+      case 10:
+        // code block
+        document.getElementById("textosframedirecionamento").style.display = "none";
+        document.getElementById("textosframecompreencao").style.display = "none";
+        document.getElementById("textosframe").style.display = "none";
+        document.getElementById("caixadosbotoesfuncionais").style.display = "none";
+        document.getElementById("caixa_video").style.display = "none";
+        document.getElementById("checkcompreencao").style.display = "none";
+        document.getElementById("caixaresumoframe").style.display = "none";
+        document.getElementById("BoxFrames").style.display = "none";
+        document.getElementById("textosframeturnofala").style.display = "none";
+        document.getElementById("textosframegestosobservados").style.display = "none";    
+        document.getElementById("textosframecritica").style.display = "none";          
+        document.getElementById("navegamenu").style.display = "block";
+        document.getElementById("checkindicadoresdiscursivos").style.display = "none";
+        document.getElementById("checkindicadoresgestuais").style.display = "none";
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_SESSAO.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_DIARIO_BORDO/diario_bordo.asp',strSessao,intAluno,intLink)
+        break;
+
+      ///////////////////////////////      PRATICAS   //////////////////////////////////  
+      case 11:
+        // code block
+        $('#artefatospratica').show();
+        $('#caixachat').show();
+        $('#justificativapratica').show();
+        $('#resultadofiltropraticas').show();
+        $('#navegamenu').hide();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA.asp',strSessao,intAluno,intLink)
+        break;  
+      case 12:
+        // code block
+        carregaPagina('navegamenu','/INCLUDES/BOX_CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        //carregaPagina('navegamenu','/md_QUADRO_PSICOPEDAGOGICO/quadro_psicopedagogico.asp',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#grava_quado_psicopedagogico').hide();
+        $('#navegamenu').show();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA.asp',strSessao,intAluno,intLink)
+        break;  
+      case 13:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_SINTESE_OBSERVACAO/sintese_observacao.asp',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#grava_sintese_observacao').hide();
+        $('#navegamenu').show();
+        break;  
+      case 14:
+        // code block
+        // submetePagina('','/md_indicadores/avaliacao_indicadores.asp',strSessao,intAluno,'','',19)
+        // carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA.asp',strSessao,intAluno,intLink)
+        // carregaPagina('navegamenu','/INCLUDES/BOX_BOTAO_CATEGORIA_INDICADORES.ASP',strSessao,intLink,intAluno)
+        // $('#artefatospratica').hide();
+        // $('#caixachat').hide();
+        // $('#justificativapratica').hide();
+        // $('#resultadofiltropraticas').hide();
+        // $('#navegamenu').show();      
+        // break;  
+
+        // code block
+        ////console.log('enviado de: '+strSessao,intAluno,intLink)
+        $('#navegamenu').hide();
+        $('#pagina').show();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_INDICADORES.asp',strSessao,intAluno,intLink)
+        submetePagina('','/md_indicadores/avaliacao_indicadores.asp',strSessao,intAluno,'','',14)
+        break;
+        
+      case 15:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_DIARIO_BORDO_PRATICA/diario_bordo_pratica.asp',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#navegamenu').show();
+        break;  
+      case 16:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_pratica_pedagogica/GRAFICOS_EVOLUTIVOS.ASP',strSessao,intAluno,intLink)
+        //carregaPagina('navegamenu','/md_pratica_pedagogica/GRAFICOS_EVOLUTIVOS.ASP',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#navegamenu').show();
+        break;  
+      case 17:
+        // code block
+        //carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA.asp',strSessao,intAluno,intLink)
+        submetePagina('','/md_indicadores/grafico_indicadores.asp',strSessao,intAluno,'','',20)
+        break;
+      case 18:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/includes/box_mapa_execucao.asp',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#grava_sintese_observacao').hide();
+        $('#navegamenu').show();
+        break;
+      ///////////////////////////////////     INDICADORES    /////////////////////////////////////
+      case 19:
+        // code block
+        ////console.log('enviado de: '+strSessao,intAluno,intLink)
+        $('#navegamenu').hide();
+        $('#pagina').show();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_INDICADORES.asp',strSessao,intAluno,intLink)
+        submetePagina('','/md_indicadores/avaliacao_indicadores.asp',strSessao,intAluno,'','',19)
+        break;
+      case 20:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_INDICADORES.asp',strSessao,intAluno,intLink)
+        submetePagina('','/md_indicadores/grafico_indicadores.asp',strSessao,intAluno,'','',20)
+        break;
+      case 21:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_INDICADORES.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_SINTESE_OBSERVACAO/sintese_observacao.asp',strSessao,intAluno,intLink)
+        $('#pagina').hide();
+        $('#navegamenu').show();                 
+        break;
+      case 22:  
+        // code block
+        // $('#navegamenu').hide(); 
+        // $('#pagina').show();
+        // carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_INDICADORES.asp',strSessao,intAluno,intLink)
+        submetePagina('','/md_pratica_pedagogica/pratica_pedagogica.asp',strSessao,intAluno,'','','')
+        break;
+      case 23:  
+        // code block
+        $('#navegamenu').show(); 
+        $('#pagina').hide();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_INDICADORES.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_DIARIO_BORDO/diario_bordo.asp',strSessao,intAluno,intLink)
+        // carregaPagina('navegamenu','/md_DIARIO_BORDO_PRATICA/diario_bordo_pratica.asp',strSessao,intAluno,intLink)
+        // carregaPagina('navegamenu','/md_DIARIO_BORDO_FAMILIA/diario_bordo_familia.asp',strSessao,intAluno,intLink)
+        break;
+      case 24:  
+        // code block
+        $('#navegamenu').show(); 
+        $('#pagina').hide();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_INDICADORES.asp',strSessao,intAluno,intLink)
+        // carregaPagina('navegamenu','/md_DIARIO_BORDO/diario_bordo.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_DIARIO_BORDO_PRATICA/diario_bordo_pratica.asp',strSessao,intAluno,intLink)
+        // carregaPagina('navegamenu','/md_DIARIO_BORDO_FAMILIA/diario_bordo_familia.asp',strSessao,intAluno,intLink)
+        break;
+      case 25:  
+        // code block
+        $('#navegamenu').show(); 
+        $('#pagina').hide();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_INDICADORES.asp',strSessao,intAluno,intLink)
+        // carregaPagina('navegamenu','/md_DIARIO_BORDO/diario_bordo.asp',strSessao,intAluno,intLink)
+        // carregaPagina('navegamenu','/md_DIARIO_BORDO_PRATICA/diario_bordo_pratica.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_DIARIO_BORDO_FAMILIA/diario_bordo_familia.asp',strSessao,intAluno,intLink)
+        break;
+        
+      case 26:  
+        // code block
+        ////console.log('enviado de: '+strSessao,intAluno,intLink)
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_INDICADORES.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/INCLUDES/BOX_MAPA_EXECUCAO_INDICADORES.asp',strSessao,intAluno,intLink)
+        $('#pagina').hide();
+        $('#navegamenu').show();
+        break;
+//////////////////////////////////////////////////    FAMILIA    ////////////////////////////////////////////////////
+      case 27:  
+        $('#formulario90').html('');
+        $('#formulario90').hide();
+        $('#detalhesessaofamilia').hide();
+        $('#detalhepraticafamilia').hide();
+        $('#caixachat').hide();
+        $('#nevegamenu').html('');
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_SINTESE_OBSERVACAO/sintese_observacao.asp',strSessao,intAluno,intLink)
+        break;
+      case 28:  
+        // code block
+        // $('#formulario90').html('');
+        // $('#formulario90').hide();
+        // $('#detalhesessaofamilia').hide();
+        // $('#detalhepraticafamilia').show();
+        // $('#caixachat').show();
+        // $('#navegamenu').html('');
+        // $('#conteudodetalhepraticafamilia').show();
+        // $('#conteudopraticafamilia').show();
+        // // carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+        // // carregaPagina('conteudodetalhepraticafamilia','/INCLUDES/BOX_JUSTIFICATIVA_PRATICA.asp',strSessao,intAluno,intLink)
+        // // carregaPagina('conteudopraticafamilia','/INCLUDES/BOX_FILTRO_ARTEFATO_PRATICAS.asp',strSessao,intAluno,intLink)
+        // //submetePagina('','/md_pratica_pedagogica/pratica_pedagogica.asp',strSessao,intAluno,'','','')
+        submetePagina('','/md_pratica_pedagogica/pratica_pedagogica_PAI_ALUNO.ASP',strSessao,intAluno,intLink,'',28)
+        break;
+        case 29:  
+        $('#formulario90').html('');
+        $('#formulario90').hide();
+        $('#detalhepraticafamilia').hide();
+        $('#detalhesessaofamilia').hide();
+        $('#caixachat').hide();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/includes/box_mapa_execucao.asp',strSessao,intAluno,intLink)
+        break;
+        case 30:  
+        //submetePagina('','/md_indicadores/avaliacao_indicadores.asp',strSessao,intAluno,'','','')
+        $('#formulario90').html('');
+        $('#formulario90').hide();
+        $('#detalhepraticafamilia').hide();
+        $('#detalhesessaofamilia').hide();
+        $('#caixachat').hide();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/INCLUDES/BOX_BOTAO_CATEGORIA_INDICADORES.ASP',strSessao,intAluno,intLink)
+        
+        break;
+        case 31: 
+        $('#conteudodetalhepraticafamilia').hide();
+        $('#conteudopraticafamilia').hide(); 
+        $('#formulario90').html('');
+        $('#formulario90').hide();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/includes/box_mapa_execucao_indicadores.asp',strSessao,intAluno,intLink)
+        $('#detalhesessaofamilia').hide();
+        $('#caixachat').hide();
+        break;
+        case 32:
+          $('#conteudodetalhepraticafamilia').hide();
+          $('#conteudopraticafamilia').hide();  
+          $('#formulario90').html('');
+          $('#formulario90').hide();
+          carregaPagina('navegamenu','/md_DIARIO_BORDO/diario_bordo.asp',strSessao,intAluno,intLink)
+          carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+          $('#detalhesessaofamilia').hide();
+          $('#caixachat').hide();
+          $('#grava_diario_bordo').hide();
+          
+          break;
+          case 33:
+            $('#conteudodetalhepraticafamilia').hide();
+            $('#conteudopraticafamilia').hide();  
+            $('#formulario90').html('');
+            $('#formulario90').hide();
+            carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+            $('#detalhesessaofamilia').hide();
+            $('#caixachat').hide();
+            carregaPagina('navegamenu','/md_DIARIO_BORDO_PRATICA/diario_bordo_pratica.asp',strSessao,intAluno,intLink)
+            $('#grava_diario_bordo').prop("disabled",true);
+            break;
+            case 34:  
+            $('#conteudodetalhepraticafamilia').hide();
+            $('#caixachat').hide(); 
+            $('#conteudopraticafamilia').hide();
+            $('#formulario90').html('');
+            carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+            $('#detalhesessaofamilia').hide();
+            carregaPagina('navegamenu','/md_DIARIO_BORDO_FAMILIA/diario_bordo_familia.asp',strSessao,intAluno,intLink)
+            break;
+      case 35:  
+        $('#conteudodetalhepraticafamilia').hide();
+        $('#conteudopraticafamilia').hide();
+        $('#formulario90').html('');
+        $('#formulario90').hide();
+        $('#detalhesessaofamilia').hide();
+        $('#caixachat').hide(); 
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_pratica_pedagogica/GRAFICOS_EVOLUTIVOS.ASP',strSessao,intAluno,intLink)
+        
+        break;
+      case 36: 
+        $('#conteudodetalhepraticafamilia').hide();
+        $('#conteudopraticafamilia').hide(); 
+        $('#formulario90').html('');
+        $('#formulario90').hide();
+        $('#detalhepraticafamilia').hide();
+        $('#detalhesessaofamilia').hide();
+        $('#caixachat').hide();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/INCLUDES/BOX_BOTAO_CATEGORIA_GRAFICO_INDICADORES.ASP',strSessao,intAluno,intLink)
+        //submetePagina('','/md_indicadores/grafico_indicadores.asp',strSessao,intAluno,'','','')
+        break;
+      
+      case 37:
+        $('#conteudodetalhepraticafamilia').hide();
+        $('#conteudopraticafamilia').hide();  
+        $('#formulario90').html('');
+        $('#formulario90').hide();
+        $('#detalhepraticafamilia').hide(); 
+        $('#navegamenu').html('');
+        $('#caixachat').show();
+        $('#detalhesessaofamilia').show();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+        //submetePagina('','/md_indicadores/grafico_indicadores.asp',strSessao,intAluno,'','','')
+        submetePagina('','/MD_familia/CARBONO_FAMILIA_SESSAO_FORM.asp',strSessao,intAluno,intLink,'',28)
+        break;
+        case 38: 
+        //$('#)
+        $('#conteudodetalhepraticafamilia').hide();
+        $('#conteudopraticafamilia').hide();
+        $('#formulario90').show();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',strSessao,intAluno,intLink)
+        $('#detalhepraticafamilia').hide(); 
+        $('#detalhesessaofamilia').hide();
+        $('#caixachat').hide();
+        carregaPagina('navegamenu','/INCLUDES/BOX_CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        break;
+      case 39:
+        // code block
+        // $('#artefatospratica').show();
+        // $('#caixachat').show();
+        // $('#justificativapratica').show();
+        // $('#resultadofiltropraticas').show();
+        // $('#navegamenu').hide();
+        // carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFISSIONAL.asp',strSessao,intAluno,intLink)
+        submetePagina('','/md_PRATICA_PROFISSIONAL/PRATICA_PROFISSIONAL.ASP',strSessao,intAluno,intLink,'',39)
+        break;
+      case 40:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFISSIONAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_MODELAGEM_PROFISSIONAL/MODELAGEM_PROFISSIONAL.ASP',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#grava_sintese_observacao').hide();
+        $('#navegamenu').show();
+        break; 
+      case 41:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFISSIONAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_CONTEUDO_PROGRAMATICO/conteudo_programatico.asp',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#grava_sintese_observacao').hide();
+        $('#navegamenu').show();
+        break;
+        case 42:
+          // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFISSIONAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_PRATICA_PROFISSIONAL/PRATICA_PROFISSIONAL_QUESTIONARIO_ALUNO.ASP',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#grava_sintese_observacao').hide();
+        $('#navegamenu').show();
+
+        break;
+      case 43:
+        // code block
+        carregaPagina('navegamenu','/md_DIARIO_BORDO_PRATICA/diario_bordo_pratica.asp',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#navegamenu').show();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFISSIONAL.asp',strSessao,intAluno,intLink)
+        break;
+      case 44:
+        // code block
+        //submetePagina('','/md_indicadores/grafico_indicadores.asp',strSessao,intAluno,'','',20)
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFISSIONAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_PRATICA_PROFISSIONAL/GRAFICOS_EVOLUTIVOS.ASP',strSessao,intAluno,intLink)
+        //carregaPagina('navegamenu','/md_pratica_pedagogica/GRAFICOS_EVOLUTIVOS.ASP',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#navegamenu').show();        
+        break; 
+      case 45:
+        // code block
+        // carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFISSIONAL.asp',strSessao,intAluno,intLink)
+        // carregaPagina('navegamenu','/md_PRATICA_PROFISSIONAL/PRATICA_PROFISSIONAL_REVENDO.ASP',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#grava_sintese_observacao').hide();
+        $('#navegamenu').show();
+        submetePagina('','/md_PRATICA_PROFISSIONAL/PRATICA_PROFISSIONAL_REVENDO.ASP',strSessao,intAluno,intLink,'',45)
+        break;
+      case 46:
+        // code block
+        carregaPagina('navegamenu','/md_PRATICA_PROFISSIONAL/PRATICA_PROFISSIONAL_VOCACIONAL.ASP',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#grava_sintese_observacao').hide();
+        $('#navegamenu').show();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFISSIONAL.asp',strSessao,intAluno,intLink)
+        break;   
+      case 47:
+        // code block
+        submetePagina('','/md_GESTAO_FAMILIA/CARBONO_GESTAO_FAMILIA.ASP',strSessao,intAluno,intLink,'',47)
+        // $('#artefatospratica').hide();
+        // $('#caixachat').hide();
+        // $('#justificativapratica').hide();
+        // $('#resultadofiltropraticas').hide();
+        // $('#grava_sintese_observacao').hide();
+        // $('#navegamenu').show();
+        break;   
+      // Menu exclusivo para professor
+      case 111:
+        // code block
+        $('#artefatospratica').show();
+        $('#caixachat').show();
+        $('#justificativapratica').show();
+        $('#resultadofiltropraticas').show();
+        $('#navegamenu').hide();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFESSOR.asp',strSessao,intAluno,intLink)
+        break;  
+      case 112:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFESSOR.asp',strSessao,intAluno,intLink)
+        //carregaPagina('navegamenu','/md_QUADRO_PSICOPEDAGOGICO/quadro_psicopedagogico.asp',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#grava_quado_psicopedagogico').hide();
+        $('#navegamenu').show();
+        carregaPagina('navegamenu','/md_contexto/CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        break;  
+      case 113:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFESSOR.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_SINTESE_OBSERVACAO/sintese_observacao.asp',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#grava_sintese_observacao').hide();
+        $('#navegamenu').show();
+        break;  
+      case 114:
+        // code block
+        // submetePagina('','/md_indicadores/avaliacao_indicadores.asp',strSessao,intAluno,'','',19)
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFESSOR.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_CHAT_PRATICAS/chat_praticas.asp',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#navegamenu').show();        
+       
+        break;  
+      case 115:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFESSOR.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_DIARIO_BORDO_PRATICA/diario_bordo_pratica.asp',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#navegamenu').show();
+        break;  
+      case 116:
+        // code block
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFESSOR.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/md_pratica_pedagogica/GRAFICOS_EVOLUTIVOS.ASP',strSessao,intAluno,intLink)
+        //carregaPagina('navegamenu','/md_pratica_pedagogica/GRAFICOS_EVOLUTIVOS.ASP',strSessao,intAluno,intLink)
+        $('#artefatospratica').hide();
+        $('#caixachat').hide();
+        $('#justificativapratica').hide();
+        $('#resultadofiltropraticas').hide();
+        $('#navegamenu').show();
+        break;  
+      case 117:
+          // code block
+          $('#artefatospratica').hide();
+          $('#caixachat').hide();
+          $('#justificativapratica').hide();
+          $('#resultadofiltropraticas').hide();
+          $('#navegamenu').show();
+        carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFESSOR.asp',strSessao,intAluno,intLink)
+        carregaPagina('navegamenu','/INCLUDES/BOX_BOTAO_CATEGORIA_GRAFICO_INDICADORES.ASP',strSessao,intLink,intAluno)
+        //submetePagina('','/md_indicadores/grafico_indicadores.asp',strSessao,intAluno,'','',20)
+        break;
+      
+      //
+        
+      case '392': 
+      //$('#)
+        carregaPagina('navegamenu','/INCLUDES/BOX_CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('formulario90','/INCLUDES/BOX_CONTEXTO_SOCIAL_PERGUNTAS.asp',strSessao,intAluno,intLink)
+        break;
+      case '393': 
+      //$('#) 
+        carregaPagina('navegamenu','/INCLUDES/BOX_CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('formulario90','/INCLUDES/BOX_CONTEXTO_SOCIAL_PERGUNTAS.asp',strSessao,intAluno,intLink)
+        break;
+      case '394': 
+      //$('#)
+        carregaPagina('navegamenu','/INCLUDES/BOX_CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('formulario90','/INCLUDES/BOX_CONTEXTO_SOCIAL_PERGUNTAS.asp',strSessao,intAluno,intLink)
+        break;
+      case '395': 
+      //$('#)
+        carregaPagina('navegamenu','/INCLUDES/BOX_CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('formulario90','/INCLUDES/BOX_CONTEXTO_SOCIAL_PERGUNTAS.asp',strSessao,intAluno,intLink)
+        break;
+      case '396': 
+      //$('#)
+        carregaPagina('navegamenu','/INCLUDES/BOX_CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('formulario90','/INCLUDES/BOX_CONTEXTO_SOCIAL_PERGUNTAS.asp',strSessao,intAluno,intLink)
+        break;
+      case '397': 
+      //$('#)
+        carregaPagina('navegamenu','/INCLUDES/BOX_CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('formulario90','/INCLUDES/BOX_CONTEXTO_SOCIAL_PERGUNTAS.asp',strSessao,intAluno,intLink)
+        break;
+      case '398': 
+      //$('#)
+        carregaPagina('navegamenu','/INCLUDES/BOX_CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('formulario90','/INCLUDES/BOX_CONTEXTO_SOCIAL_PERGUNTAS.asp',strSessao,intAluno,intLink)
+        break;
+      case '399': 
+      //$('#)
+        carregaPagina('navegamenu','/INCLUDES/BOX_CONTEXTO_SOCIAL.asp',strSessao,intAluno,intLink)
+        carregaPagina('formulario90','/INCLUDES/BOX_CONTEXTO_SOCIAL_PERGUNTAS.asp',strSessao,intAluno,intLink)
+        break;
+      default:
+        msgmodal('AVISO!','Item de menu '+intLink+' não cadastrado!','');              // code block
+        
+    }
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abreVideo(intSessao,intAluno,intFrame){
+    ////console.log('Abriu FRAME '+intFrame+' para sessao '+intSessao+' AQUII!');
+    document.getElementById("caixadosbotoesfuncionais").style.display = "block";
+    document.getElementById("caixa_video").style.display = "block";
+    document.getElementById("caixaresumoframe").style.display = "block";
+    document.getElementById("BoxFrames").style.display = "block";
+$.ajax({
+    url: '/INCLUDES/BOX_VIDEO.ASP',
+    async: false,
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+    'ATORALUNOID':intAluno,
+    'NUMEROSESSAO':intSessao,
+    'FRAMEINICIAL': intFrame                    
+    },
+    success: function (resposta){
+    //////console.log(resposta)
+    $('#caixa_video').html(resposta)
+    },
+    error: function (resposta){
+        //Entrará aqui caso não de certo a requisição 
+    ////console.log('Erro no processamento!');
+   ////console.log(resposta);
+    }
+})
+}      
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abreFrame(intSessao,intAluno,intFrame){
+////console.log('Abriu FRAME '+intFrame+' para ALUNO '+intAluno+' SESSAO '+intSessao+' AQUII!');
+    document.getElementById("caixadosbotoesfuncionais").style.display = "block";
+    document.getElementById("caixa_video").style.display = "block";
+    document.getElementById("caixaresumoframe").style.display = "block";
+    document.getElementById("BoxFrames").style.display = "block";
+$.ajax({
+    url: '/INCLUDES/BOX_FRAMES.ASP',
+    async: false,
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+    'ATORALUNOID':intAluno,
+    'NUMEROSESSAO':intSessao,
+    'FRAMEINICIAL': intFrame                   
+    },
+    success: function (resposta){
+        //////console.log(resposta)
+        $('actions').val('update');
+        $('#BoxFrames').html(resposta);
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+      ////console.log('Erro no processamento!');
+      //console.log(resposta)
+    }
+})
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abreCheckFrameCompreencao(intSessao,intAluno,intFrame){
+////console.log('Abriu TEXTO FRAME '+intFrame+' para sessao '+intSessao+' AQUII!');
+$.ajax({
+    url: '/INCLUDES/BOX_CHECK_FRAME_COMPREENCAO.ASP',
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+    'ATORALUNOID':intAluno,
+    'NUMEROSESSAO':intSessao,
+    'IDFRAME': intFrame                   
+    },
+    success: function (resposta){
+       // ////console.log(resposta)
+      $('#checkcompreencao').html(resposta)
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+      ////console.log('Erro no processamento!');
+      ////console.log(resposta)
+    }
+})
+} 
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abreBotaoFuncional(intSessao,intAluno,intFrame){
+$.ajax({
+    url: '/INCLUDES/BOX_BOTOES_FUNCIONAIS.ASP',
+    async: false,
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+    'ATORALUNOID':intAluno,
+    'NUMEROSESSAO':intSessao,
+    'IDFRAME':intFrame
+    },
+     success:function (resposta){
+        //////console.log(resposta)
+        
+        $('#caixadosbotoesfuncionais').html(resposta);
+        //valida_campos(intSessao,intAluno,intFrame);
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+        ////console.log('Erro no processamento!');
+        ////console.log(resposta);
+    }
+})
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abreTextoFrame(intSessao,intAluno,intFrame){
+////console.log('Abriu TEXTO FRAME '+intFrame+' para sessao '+intSessao+' AQUII!');
+$.ajax({
+    url: '/INCLUDES/BOX_TEXTO_FRAME.ASP',
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+    'ATORALUNOID':intAluno,
+    'NUMEROSESSAO':intSessao,
+    'IDFRAME': intFrame                   
+    },
+     success:function (resposta){
+       // ////console.log(resposta)
+      $('#textosframe').html(resposta)
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+      ////console.log('Erro no processamento!');
+      //////console.log(resposta)
+    }
+})
+}     
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abreResumoFrame(intSessao,intAluno,intFrame){
+////console.log('Abriu RESUMO FRAME '+intFrame+' para sessao '+intSessao+' AQUII!');
+$.ajax({
+    url: '/INCLUDES/BOX_RESUMO_FRAME.ASP',
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+    'ATORALUNOID':intAluno,
+    'NUMEROSESSAO':intSessao,
+    'IDFRAME': intFrame                   
+    },
+     success:function (resposta){
+        //////console.log(resposta)
+        $('#caixaresumoframe').html(resposta)
+    },
+    error: function (resposta){
+        //Entrará aqui caso não de certo a requisição 
+        ////console.log('Erro no processamento!');
+        ////console.log(resposta)
+    }
+})
+}         
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abretextosframecritica(intSessao,intAluno,intFrame){
+////console.log('Abriu CRITICA '+intFrame+' para sessao '+intSessao+' AQUII!');
+$.ajax({
+    url: '/INCLUDES/BOX_TEXTO_FRAME_CRITICA.ASP',
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+    'ATORALUNOID':intAluno,
+    'NUMEROSESSAO':intSessao,
+    'IDFRAME': intFrame                   
+    },
+     success:function (resposta){
+        //////console.log(resposta)
+        $('#textosframecritica').html(resposta)
+    },
+    error: function (resposta){
+        //Entrará aqui caso não de certo a requisição 
+        ////console.log('Erro no processamento!');
+        console.log(resposta)
+    }
+})
+
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abretextosframeturnofala(intSessao,intAluno,intFrame){
+  ////console.log('Abriu TURNO FALA '+intFrame+' para sessao '+intSessao+' AQUII!');
+  $.ajax({
+      url: '/INCLUDES/BOX_TEXTO_FRAME_TURNO_FALA.ASP',
+      type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+      data: {
+      'ATORALUNOID':intAluno,
+      'NUMEROSESSAO':intSessao,
+      'IDFRAME': intFrame                   
+      },
+       success:function (resposta){
+          //////console.log(resposta)
+          $('#textosframeturnofala').html(resposta)
+      },
+      error: function (resposta){
+          //Entrará aqui caso não de certo a requisição 
+          ////console.log('Erro no processamento!');
+          ////console.log(resposta)
+      }
+  })
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abretextosframegestosobservados(intSessao,intAluno,intFrame){
+  ////console.log('Abriu gestosobservados '+intFrame+' para sessao '+intSessao+' AQUII!');
+  $.ajax({
+      url: '/INCLUDES/BOX_TEXTO_FRAME_GESTOS_OBSERVADOS.ASP',
+      type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+      data: {
+      'ATORALUNOID':intAluno,
+      'NUMEROSESSAO':intSessao,
+      'IDFRAME': intFrame                   
+      },
+       success:function (resposta){
+          //////console.log(resposta)
+          $('#textosframegestosobservados').html(resposta)
+      },
+      error: function (resposta){
+          //Entrará aqui caso não de certo a requisição 
+          ////console.log('Erro no processamento!');
+          ////console.log(resposta)
+      }
+  })
+}    
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abretextosframeindicadoresdiscursivos(intSessao,intAluno,intFrame){
+  ////console.log('Abriu indicadoresdiscursivos frame'+intFrame+' para sessao'+intSessao+' aluno'+intAluno+' AQUII!');
+  $.ajax({
+      url: '/INCLUDES/BOX_CHECK_FRAME_INDICADORES_DISCURSIVOS.ASP',
+      type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+      data: {
+      'ATORALUNOID':intAluno,
+      'NUMEROSESSAO':intSessao,
+      'IDFRAME': intFrame                   
+      },
+       success:function (resposta){
+          //////console.log(resposta)
+          $('#checkindicadoresdiscursivos').html(resposta)
+      },
+      error: function (resposta){
+          //Entrará aqui caso não de certo a requisição 
+          ////console.log('Erro no processamento!');
+          ////console.log(resposta)
+      }
+  })
+} 
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abretextosframeindicadoresgestuais(intSessao,intAluno,intFrame){
+  ////console.log('Abriu indicadoresGESTUAIS '+intFrame+' para sessao '+intSessao+' AQUII!');
+  $.ajax({
+      url: '/INCLUDES/BOX_CHECK_FRAME_INDICADORES_GESTUAIS.ASP',
+      async: false,
+      type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+      data: {
+      'ATORALUNOID':intAluno,
+      'NUMEROSESSAO':intSessao,
+      'IDFRAME': intFrame                   
+      },
+       success:function (resposta){
+          //////console.log(resposta)
+          $('#checkindicadoresgestuais').html(resposta)
+      },
+      error: function (resposta){
+          //Entrará aqui caso não de certo a requisição 
+          ////console.log('Erro no processamento!');
+          ////console.log(resposta)
+      }
+  })
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  carregaMetodo(intSessao,intAluno,intFrame,strAction){
+      var resposta = 'Abriu carregaMetodo sessão('+intSessao+')/n idaluno('+intAluno+') idframe('+intFrame+') strAction('+strAction+')'
+      //console.log(resposta);
+      ////console.log('chegou '+strAction);
+      ////console.log('Actions '+document.getElementById("actions").value);
+      carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_SESSAO.asp',intSessao,intAluno,2);
+      abreFrame(intSessao,intAluno,intFrame);
+      var Oframe = intFrame;
+      if(intFrame == '01'){
+        Oframe = document.getElementById("frameid").value;
+        ////console.log('oframe '+Oframe)
+      }
+      abreBotaoFuncional(intSessao,intAluno,Oframe);
+      valida_campos(intSessao,intAluno,Oframe);
+      document.getElementById("actions").value = strAction;
+      
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abretextosframedirecionamento(intSessao,intAluno,intFrame){
+  ////console.log('Abriu indicadoresdiscursivos frame'+intFrame+' para sessao'+intSessao+' aluno'+intAluno+' AQUII!');
+  $.ajax({
+      url: '/INCLUDES/BOX_TEXTO_FRAME_DIRECIONAMENTO.ASP',
+      type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+      data: {
+      'ATORALUNOID':intAluno,
+      'NUMEROSESSAO':intSessao,
+      'IDFRAME': intFrame                   
+      },
+       success:function (resposta){
+          //////console.log(resposta)
+          $('#textosframedirecionamento').html(resposta)
+      },
+      error: function (resposta){
+          //Entrará aqui caso não de certo a requisição 
+          ////console.log('Erro no processamento!');
+          //console.log(resposta)
+      }
+  })
+} 
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  abretextosframecompreencao(intSessao,intAluno,intFrame){
+  ////console.log('Abriu indicadoresdiscursivos frame'+intFrame+' para sessao'+intSessao+' aluno'+intAluno+' AQUII!');
+  $.ajax({
+      url: '/INCLUDES/BOX_TEXTO_FRAME_COMPREENCAO.ASP',
+      type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+      data: {
+      'ATORALUNOID':intAluno,
+      'NUMEROSESSAO':intSessao,
+      'IDFRAME': intFrame                   
+      },
+       success:function (resposta){
+          //////console.log(resposta)
+          $('#textosframecompreencao').html(resposta)
+      },
+      error: function (resposta){
+          //Entrará aqui caso não de certo a requisição 
+          ////console.log('Erro no processamento!');
+          //console.log(resposta)
+      }
+  })
+} 
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  valida_campos(intSessao,intAluno,intFrame){
+
+  ////console.log(intSessao,intAluno,intFrame)
+  document.getElementById("checkcompreencao").style.display = "none";
+  document.getElementById("checkindicadoresgestuais").style.display = "none";
+  document.getElementById("checkindicadoresdiscursivos").style.display = "none";
+  document.getElementById("textosframe").style.display = "none";
+  document.getElementById("textosframecompreencao").style.display = "none";
+  document.getElementById("textosframecritica").style.display = "none";
+  document.getElementById("textosframedirecionamento").style.display = "none";
+  document.getElementById("textosframegestosobservados").style.display = "none";
+  document.getElementById("textosframeturnofala").style.display = "none";
+  
+  //Direcionamento
+  if( $("#tf44").is(":checked") == true ){
+    abretextosframedirecionamento(intSessao,intAluno,intFrame);
+    document.getElementById("textosframedirecionamento").style.display = "block";
+  }
+  //Preenchimento de Lacuna
+  if( $("#tf45").is(":checked") == true ){
+    abreTextoFrame(intSessao,intAluno,intFrame);
+    document.getElementById("textosframe").style.display = "block";
+  }
+  //Crítica
+  if( $("#tf46").is(":checked") == true ){
+    document.getElementById("textosframecritica").style.display = "block";
+    abretextosframecritica(intSessao,intAluno,intFrame);
+  }
+  //Compreensão
+  if( $("#tf47").is(":checked") == true ){
+    abreCheckFrameCompreencao(intSessao,intAluno,intFrame);
+    abretextosframecompreencao(intSessao,intAluno,intFrame);
+    document.getElementById("textosframecompreencao").style.display = "block";
+    document.getElementById("checkcompreencao").style.display = "block";
+  }
+  //turno Fala
+  if( $("#di93").is(":checked") == true ){
+    abretextosframeturnofala(intSessao,intAluno,intFrame);
+    document.getElementById("textosframeturnofala").style.display = "block";
+  }
+  //Gestos Observados
+  if( $("#di95").is(":checked") == true ){
+    abretextosframegestosobservados(intSessao,intAluno,intFrame);
+    document.getElementById("textosframegestosobservados").style.display = "block";
+  }
+  //indicadores Discursivos
+  if( $("#in53").is(":checked") == true ){
+    abretextosframeindicadoresdiscursivos(intSessao,intAluno,intFrame)
+    document.getElementById("checkindicadoresdiscursivos").style.display = "block";
+  }       
+  //indicadores Gestuais
+  if( $("#in54").is(":checked") == true ){
+    abretextosframeindicadoresgestuais(intSessao,intAluno,intFrame)
+    document.getElementById("checkindicadoresgestuais").style.display = "block";
+  }   
+
+  abreResumoFrame(intSessao,intAluno,intFrame);    
+  
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  gravaCC(){
+  var inputfields
+  var ar_inputflds
+
+  inputfields = document.getElementsByName("indicadoresid");
+  ar_inputflds = inputfields.length;
+  var indicadoresid = 0;
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'radio' && inputfields[i].checked == true){
+      var indicadoresid = inputfields[i].value;
+    }
+  }
+  inputfields = document.getElementsByName("trocascomunicativasid");
+  ar_inputflds = inputfields.length;
+  var trocascomunicativasid = 0;
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'radio' && inputfields[i].checked == true){
+      var trocascomunicativasid = inputfields[i].value;
+      }
+  }
+  inputfields = document.getElementsByName("tipoframeid");
+  ar_inputflds = inputfields.length;
+  var tipoframeid = 0;
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'radio' && inputfields[i].checked == true){
+      var tipoframeid = inputfields[i].value;
+      }
+  }
+  inputfields = document.getElementsByName("discursoid");
+  ar_inputflds = inputfields.length;
+  var discursoid = 0;
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'radio' && inputfields[i].checked == true){
+      var discursoid = inputfields[i].value;
+    }
+  }
+
+
+  inputfields = document.getElementsByName("dip");
+  ar_inputflds = inputfields.length;
+  var dip = 0
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'checkbox' && inputfields[i].checked == true)
+      dip = inputfields[i].value;
+  }
+  inputfields = document.getElementsByName("desp");
+  ar_inputflds = inputfields.length;
+  var desp = 0
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'checkbox' && inputfields[i].checked == true)
+      desp = inputfields[i].value;
+  }            
+  inputfields = document.getElementsByName("cdirh");
+  ar_inputflds = inputfields.length;
+  var cdirh = 0
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'checkbox' && inputfields[i].checked == true)
+      cdirh = inputfields[i].value;
+  }            
+  inputfields = document.getElementsByName("cdipI1");
+  ar_inputflds = inputfields.length;
+  var cdipI1 = 0
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'checkbox' && inputfields[i].checked == true)
+      cdipI1 = inputfields[i].value;
+  }            
+  inputfields = document.getElementsByName("cdipI2");
+  ar_inputflds = inputfields.length;
+  var cdipI2 = 0
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'checkbox' && inputfields[i].checked == true)
+      cdipI2 = inputfields[i].value;
+  };
+
+var Check_Ind_Gest_71 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_71");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_71 = 1;};
+
+var Check_Ind_Gest_70 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_70");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_70 =1; };
+
+var Check_Ind_Gest_69 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_69");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_69 =1; };
+
+var Check_Ind_Gest_68 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_68");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_68 =1; };
+
+var Check_Ind_Gest_67 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_67");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_67 =1; };
+
+var Check_Ind_Gest_66 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_66");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_66 =1; };
+
+var Check_Ind_Gest_65 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_65");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_65 =1; };
+
+var Check_Ind_Gest_64 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_64");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_64 =1; };
+
+var Check_Ind_Gest_63 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_63");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_63 =1; };
+
+var Check_Ind_Gest_62 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_62");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_62 =1; };
+
+var Check_Ind_Gest_61 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_61");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_61 =1; };
+
+var Check_Ind_Gest_60 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_60");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_60 =1; };
+
+var Check_Ind_Gest_59 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_59");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_59 =1; };
+
+var Check_Ind_Gest_58 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_58");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_58 =1; };
+
+var Check_Ind_Gest_57 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_57");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_57 =1; };
+
+var Check_Ind_Gest_56 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_56");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_56 =1; };
+
+var Check_Ind_Gest_55 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_55");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_55 =1; };
+
+var Check_Ind_Gest_54 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_54");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_54 =1; };
+
+var Check_Ind_Gest_53 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_53");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_53 =1; };
+
+var Check_Ind_Gest_52 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_52");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_52 =1; };
+
+var Check_Ind_Gest_51 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_51");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_51 =1; };
+
+var Check_Ind_Gest_50 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_50");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_50 =1; };
+
+var Check_Ind_Gest_49 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_49");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_49 =1; };
+
+var Check_Ind_Gest_48 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_48");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_48 =1; };
+
+var Check_Ind_Gest_47 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_47");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_47 =1; };
+
+var Check_Ind_Gest_46 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_46");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_46 =1; };
+
+var Check_Ind_Gest_45 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_45");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_45 =1; };
+
+var Check_Ind_Gest_44 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_44");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_44 =1; };
+
+var Check_Ind_Gest_43 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_43");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_43 =1; };
+
+var Check_Ind_Gest_42 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_42");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_42 =1; };
+
+var Check_Ind_Gest_41 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_41");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_41 =1; };
+
+var Check_Ind_Gest_40 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_40");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_40 =1; };
+
+var Check_Ind_Gest_39 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_39");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_39 =1; };
+
+var Check_Ind_Gest_38 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_38");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_38 =1; };
+
+var Check_Ind_Gest_37 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_37");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_37 =1; };
+
+var Check_Ind_Gest_36 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_36");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_36 =1; };
+
+var Check_Ind_Gest_35 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_35");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_35 =1; };
+
+var Check_Ind_Gest_34 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_34");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_34 =1; };
+
+var Check_Ind_Gest_33 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_33");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_33 =1; };
+
+var Check_Ind_Gest_32 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_32");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_32 =1;};    
+
+var Check_Ind_Gest_31 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_31");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_31 =1; };   
+
+var Check_Ind_Gest_30 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_30");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_30 =1;};
+
+var Check_Ind_Gest_29 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_29");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_29 =1;};  
+
+var Check_Ind_Gest_28 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_28");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_28 =1;};    
+
+var Check_Ind_Gest_27 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_27");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_27 =1;};    
+
+var Check_Ind_Gest_26 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_26");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_26 =1;};    
+
+var Check_Ind_Gest_25 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_25");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_25 =1;};  
+
+var Check_Ind_Gest_24 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_24");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_24 =1;};  
+
+var Check_Ind_Gest_23 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_23");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_23 =1;};  
+
+var Check_Ind_Gest_22 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_22");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_22 =1;};  
+
+var Check_Ind_Gest_21 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_21");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_21 =1;};  
+
+var Check_Ind_Gest_20 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_20");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_20 =1;};  
+
+var Check_Ind_Gest_19 = 0;
+inputfields = document.getElementsByName("Check_Ind_Gest_19");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Gest_19 =1;};  
+
+var Check_Ind_Disc_18 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_18");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_18 =1;};  
+
+var Check_Ind_Disc_17 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_17");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_17 =1;};  
+
+var Check_Ind_Disc_16 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_16");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_16 =1;};  
+
+var Check_Ind_Disc_15 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_15");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_15 =1;};  
+
+var Check_Ind_Disc_14 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_14");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_14 =1;};  
+
+var Check_Ind_Disc_13 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_13");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_13 =1;};  
+
+var Check_Ind_Disc_12 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_12");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_12 =1;};  
+
+var Check_Ind_Disc_11 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_11");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_11 =1;};  
+        
+var Check_Ind_Disc_10 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_10");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_10 =1; }    
+
+var Check_Ind_Disc_09 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_09");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_09 =1; }    
+
+var Check_Ind_Disc_08 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_08");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_08 =1;};  
+
+var Check_Ind_Disc_07 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_07");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_07 =1; };    
+
+var Check_Ind_Disc_06 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_06");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_06 =1;};    
+
+var Check_Ind_Disc_05 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_05");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_05 =1;};  
+
+var Check_Ind_Disc_04 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_04");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_04 =1;};  
+
+var Check_Ind_Disc_03 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_03");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_03 =1;};  
+
+var Check_Ind_Disc_02 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_02");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_02 =1;};  
+
+var Check_Ind_Disc_01 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_01");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_01 =1; };
+
+var Check_Ind_Disc_19 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_19");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_19 =1; };
+
+var Check_Ind_Disc_20 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_20");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_20 =1; };
+
+var Check_Ind_Disc_21 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_21");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_21 =1; };
+
+var Check_Ind_Disc_22 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_22");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_22 =1; };
+
+var Check_Ind_Disc_23 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_23");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_23 =1; };
+
+var Check_Ind_Disc_24 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_24");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_24 =1; };
+
+var Check_Ind_Disc_25 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_25");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_25 =1; };
+
+var Check_Ind_Disc_26 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_26");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_26 =1; };
+
+var Check_Ind_Disc_27 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_27");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_27 =1; };
+
+var Check_Ind_Disc_28 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_28");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_28 =1; };
+
+var Check_Ind_Disc_29 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_29");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_29 =1; };
+
+var Check_Ind_Disc_30 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_30");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_30 =1; };
+
+var Check_Ind_Disc_31 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_31");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_31 =1; };
+
+var Check_Ind_Disc_32 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_32");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_32 =1; };
+
+var Check_Ind_Disc_33 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_33");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_33 =1; };
+
+var Check_Ind_Disc_34 = 0;
+inputfields = document.getElementsByName("Check_Ind_Disc_34");
+if (inputfields[0].type == 'checkbox' && inputfields[0].checked == true){ Check_Ind_Disc_34 =1; };
+
+var DescCaractFisica = '';
+if (document.getElementById("DescCaractFisica")){
+    DescCaractFisica =  document.getElementById('DescCaractFisica').value;
+}
+var DescAcoes = '';
+if (document.getElementById("DescAcoes")){
+    DescAcoes =  document.getElementById('DescAcoes').value;
+}
+var DescEstados = '';
+if (document.getElementById("DescEstados")){
+    DescEstados =  document.getElementById('DescEstados').value;
+}
+var DescCaractCenario = '';
+if (document.getElementById("DescCaractCenario")){
+    DescCaractCenario =  document.getElementById('DescCaractCenario').value;
+}
+var RESUMOFRAME = '';
+if (document.getElementById("RESUMOFRAME")){
+    RESUMOFRAME = document.getElementById('RESUMOFRAME').value;
+}
+var actions = '';
+if (document.getElementById("actions")){
+    actions = document.getElementById('actions').value;
+    if(actions==''){
+      actions = 'update';
+    }
+    ////console.log('no CC actions '+document.getElementById("actions").value);
+    ////console.log('no CC actions var '+actions);
+}
+var atorid = 0;
+if (document.getElementById("atorid")){
+    atorid = document.getElementById('atorid').value;
+}
+var sessaoobservacaoid = '00';
+if (document.getElementById("sessaoobservacaoid")){
+    sessaoobservacaoid = document.getElementById("sessaoobservacaoid").value;
+}
+var filmeurl = '';
+if (document.getElementById("filmeurl")){
+    filmeurl = document.getElementById('filmeurl').src;
+}
+var DataInicioFrame = '';
+if (document.getElementById("DataInicioFrame")){
+    DataInicioFrame = document.getElementById('DataInicioFrame').value;
+}
+var DataFinalFrame = '';
+if (document.getElementById("DataFinalFrame")){
+    DataFinalFrame = document.getElementById('DataFinalFrame').value;
+}
+var IDENT = 0;
+if (document.getElementById("frameid").value){
+    IDENT = document.getElementById('frameid').value;
+}
+
+var DescturnoFalaDirecionamento = '';
+if (document.getElementById("DescturnoFalaDirecionamento")){
+DescturnoFalaDirecionamento = document.getElementById('DescturnoFalaDirecionamento').value;
+    }
+var DescturnoFalaCompreencao = '';
+if (document.getElementById("DescturnoFalaCompreencao")){
+DescturnoFalaCompreencao = document.getElementById('DescturnoFalaCompreencao').value;
+    }
+var DescGestosDoDirecionamento = '';
+if (document.getElementById("DescGestosDoDirecionamento")){
+DescGestosDoDirecionamento= document.getElementById('DescGestosDoDirecionamento').value;
+    }
+var DescGestosObservadosCompreencao = '';
+if (document.getElementById("DescGestosObservadosCompreencao")){
+DescGestosObservadosCompreencao= document.getElementById('DescGestosObservadosCompreencao').value;
+    }
+var DescParceiroDI = '';
+if (document.getElementById("DescParceiroDI")){
+    DescParceiroDI = document.getElementById('DescParceiroDI').value;
+}
+var DesDiParceiro = '';
+if (document.getElementById("DesDiParceiro")){
+    DesDiParceiro = document.getElementById('DesDiParceiro').value;
+}
+var DescAutocritica = '';
+if (document.getElementById("DescAutocritica")){
+    DescAutocritica = document.getElementById('DescAutocritica').value;
+}
+var Descframedirecionamento = '';
+if (document.getElementById("Descframedirecionamento")){
+  Descframedirecionamento = document.getElementById('Descframedirecionamento').value;
+}
+var Descframecompreencao = '';
+if (document.getElementById("Descframecompreencao")){
+  Descframecompreencao = document.getElementById('Descframecompreencao').value;
+}                  
+///////////////////////////////////////////////////////////////////////////////////////////////////////     
+var combolacunas = 0;
+if (document.getElementById("combolacunas")){
+  combolacunas = document.getElementById('combolacunas').value;
+}                  
+var combocriticas = 0;
+if (document.getElementById("combocriticas")){
+  combocriticas = document.getElementById('combocriticas').value;
+}                  
+var combocompreencao = 0;
+if (document.getElementById("combocompreencao")){
+  combocompreencao = document.getElementById('combocompreencao').value;
+}                  
+///////////////////////////////////////////////////////////////////////////////////////////
+var statusSessao = '';
+if (document.getElementById("STATUS").value){
+    statusSessao = document.getElementById('STATUS').value;
+}
+//*****************  REGRAS GERAIS   ****************************** */
+if(DataInicioFrame =='' || DataFinalFrame == ''){
+msgmodal('AVISO', 'Os campos de inicio e fim do frame são obrigatórios!', '');
+return;
+}
+if(DataInicioFrame == DataFinalFrame){
+msgmodal('AVISO', 'Os campos de inicio e fim do frame NÃO podem sem o mesmo intervalo!', '');
+return;
+}
+$.ajax({
+  //enctype: 'multipart/form-data',
+  url: '/md_CONFIGURACOES_CONTEXTUAIS/CARBONO_CONFIGURACOES_CONTEXTUAIS_ACTIONS.asp',
+  type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+  data: {
+        'indicadoresid':indicadoresid,
+        'trocascomunicativasid':trocascomunicativasid,
+        'tipoframeid':tipoframeid,
+        'discursoid':discursoid,
+        'DescCaractFisica':DescCaractFisica,
+        'DescAcoes':DescAcoes,
+        'DescEstados':DescEstados,
+        'DescCaractCenario':DescCaractCenario,
+        'dip':dip,
+        'desp':desp,
+        'cdirh':cdirh,
+        'cdipI1':cdipI1,
+        'cdipI2':cdipI2,
+        'RESUMOFRAME':RESUMOFRAME,
+        'actions':actions,
+        'atorid':atorid,
+        'filmeurl':filmeurl,
+        'DataInicioFrame':DataInicioFrame,
+        'DataFinalFrame':DataFinalFrame,
+        'ID':IDENT,
+        'sessaoobservacaoid':sessaoobservacaoid,
+        'DescturnoFalaDirecionamento':DescturnoFalaDirecionamento,
+        'DescturnoFalaCompreencao':DescturnoFalaCompreencao,
+        'DescGestosDoDirecionamento':DescGestosDoDirecionamento,
+        'DescGestosObservadosCompreencao':DescGestosObservadosCompreencao,
+        'DescParceiroDI':DescParceiroDI,
+        'DesDiParceiro':DesDiParceiro,
+        'DescAutocritica':DescAutocritica,
+        'statusSessao':statusSessao,
+        'Descframedirecionamento':Descframedirecionamento,
+        'Descframecompreencao':Descframecompreencao,
+        'Check_Ind_Gest_71': Check_Ind_Gest_71,
+        'Check_Ind_Gest_70': Check_Ind_Gest_70,
+        'Check_Ind_Gest_69': Check_Ind_Gest_69,
+        'Check_Ind_Gest_68': Check_Ind_Gest_68,
+        'Check_Ind_Gest_67': Check_Ind_Gest_67,
+        'Check_Ind_Gest_66': Check_Ind_Gest_66,
+        'Check_Ind_Gest_65': Check_Ind_Gest_65,
+        'Check_Ind_Gest_64': Check_Ind_Gest_64,
+        'Check_Ind_Gest_63': Check_Ind_Gest_63,
+        'Check_Ind_Gest_62': Check_Ind_Gest_62,
+        'Check_Ind_Gest_61': Check_Ind_Gest_61,
+        'Check_Ind_Gest_60': Check_Ind_Gest_60,
+        'Check_Ind_Gest_59': Check_Ind_Gest_59,
+        'Check_Ind_Gest_58': Check_Ind_Gest_58,
+        'Check_Ind_Gest_57': Check_Ind_Gest_57,
+        'Check_Ind_Gest_56': Check_Ind_Gest_56,
+        'Check_Ind_Gest_55': Check_Ind_Gest_55,
+        'Check_Ind_Gest_54': Check_Ind_Gest_54,
+        'Check_Ind_Gest_53': Check_Ind_Gest_53,
+        'Check_Ind_Gest_52': Check_Ind_Gest_52,
+        'Check_Ind_Gest_51': Check_Ind_Gest_51,
+        'Check_Ind_Gest_50': Check_Ind_Gest_50,
+        'Check_Ind_Gest_49': Check_Ind_Gest_49,
+        'Check_Ind_Gest_48': Check_Ind_Gest_48,
+        'Check_Ind_Gest_47': Check_Ind_Gest_47,
+        'Check_Ind_Gest_46': Check_Ind_Gest_46,
+        'Check_Ind_Gest_45': Check_Ind_Gest_45,
+        'Check_Ind_Gest_44': Check_Ind_Gest_44,
+        'Check_Ind_Gest_43': Check_Ind_Gest_43,
+        'Check_Ind_Gest_42': Check_Ind_Gest_42,
+        'Check_Ind_Gest_41': Check_Ind_Gest_41,
+        'Check_Ind_Gest_40': Check_Ind_Gest_40,
+        'Check_Ind_Gest_39': Check_Ind_Gest_39,
+        'Check_Ind_Gest_38': Check_Ind_Gest_38,
+        'Check_Ind_Gest_37': Check_Ind_Gest_37,
+        'Check_Ind_Gest_36': Check_Ind_Gest_36,
+        'Check_Ind_Gest_35': Check_Ind_Gest_35,
+        'Check_Ind_Gest_34': Check_Ind_Gest_34,
+        'Check_Ind_Gest_33': Check_Ind_Gest_33,
+        'Check_Ind_Gest_32': Check_Ind_Gest_32,
+        'Check_Ind_Gest_31': Check_Ind_Gest_31,
+        'Check_Ind_Gest_30': Check_Ind_Gest_30,
+        'Check_Ind_Gest_29': Check_Ind_Gest_29,
+        'Check_Ind_Gest_28': Check_Ind_Gest_28,
+        'Check_Ind_Gest_27': Check_Ind_Gest_27,
+        'Check_Ind_Gest_26': Check_Ind_Gest_26,
+        'Check_Ind_Gest_25': Check_Ind_Gest_25,
+        'Check_Ind_Gest_24': Check_Ind_Gest_24,
+        'Check_Ind_Gest_23': Check_Ind_Gest_23,
+        'Check_Ind_Gest_22': Check_Ind_Gest_22,
+        'Check_Ind_Gest_21': Check_Ind_Gest_21,
+        'Check_Ind_Gest_20': Check_Ind_Gest_20,
+        'Check_Ind_Gest_19': Check_Ind_Gest_19,
+        'Check_Ind_Disc_18': Check_Ind_Disc_18,
+        'Check_Ind_Disc_17': Check_Ind_Disc_17,
+        'Check_Ind_Disc_16': Check_Ind_Disc_16,
+        'Check_Ind_Disc_15': Check_Ind_Disc_15,
+        'Check_Ind_Disc_14': Check_Ind_Disc_14,
+        'Check_Ind_Disc_13': Check_Ind_Disc_13,
+        'Check_Ind_Disc_12': Check_Ind_Disc_12,
+        'Check_Ind_Disc_11': Check_Ind_Disc_11,
+        'Check_Ind_Disc_10': Check_Ind_Disc_10,
+        'Check_Ind_Disc_09': Check_Ind_Disc_09,
+        'Check_Ind_Disc_08': Check_Ind_Disc_08,
+        'Check_Ind_Disc_07': Check_Ind_Disc_07,
+        'Check_Ind_Disc_06': Check_Ind_Disc_06,
+        'Check_Ind_Disc_05': Check_Ind_Disc_05,
+        'Check_Ind_Disc_04': Check_Ind_Disc_04,
+        'Check_Ind_Disc_03': Check_Ind_Disc_03,
+        'Check_Ind_Disc_02': Check_Ind_Disc_02,
+        'Check_Ind_Disc_01': Check_Ind_Disc_01,
+        'Check_Ind_Disc_19': Check_Ind_Disc_19,
+        'Check_Ind_Disc_20': Check_Ind_Disc_20,
+        'Check_Ind_Disc_21': Check_Ind_Disc_21,
+        'Check_Ind_Disc_22': Check_Ind_Disc_22,
+        'Check_Ind_Disc_23': Check_Ind_Disc_23,
+        'Check_Ind_Disc_24': Check_Ind_Disc_24,
+        'Check_Ind_Disc_25': Check_Ind_Disc_25,
+        'Check_Ind_Disc_26': Check_Ind_Disc_26,
+        'Check_Ind_Disc_27': Check_Ind_Disc_27,
+        'Check_Ind_Disc_28': Check_Ind_Disc_28,
+        'Check_Ind_Disc_29': Check_Ind_Disc_29,
+        'Check_Ind_Disc_30': Check_Ind_Disc_30,
+        'Check_Ind_Disc_31': Check_Ind_Disc_31,
+        'Check_Ind_Disc_32': Check_Ind_Disc_32,
+        'Check_Ind_Disc_33': Check_Ind_Disc_33,
+        'Check_Ind_Disc_34': Check_Ind_Disc_34,
+        'combolacunas':combolacunas,
+        'combocriticas':combocriticas,
+        'combocompreencao':combocompreencao
+        },
+   success:function (resposta){
+    //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+    //console.log(resposta)
+    //$(strDESTINO).html(resposta);
+    document.getElementById("actions").value = "UPDATE"; 
+    $('#STATUS').val('');
+    msgmodal('AVISO', resposta, '');
+    //abreFrame(sessaoobservacaoid,atorid,'01')
+  },
+  error: function (resposta){
+    //Entrará aqui caso não de certo a requisição 
+    ////console.log('Erro no processamento!');
+    //console.log(resposta);
+    //$(strDESTINO).html(resposta)
+    msgmodal('AVISO', resposta, '');
+  }
+})
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  limpaComboBotoes(){
+  $('#combolacunas').val('0');
+  $('#combocriticas').val('0');
+  $('#combocompreencao').val('0');
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  limpaComboBotoes1(){
+  $('#combocriticas').val('0');
+  $('#combocompreencao').val('0');
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  limpaComboBotoes2(){
+  $('#combolacunas').val('0');
+  $('#combocompreencao').val('0');
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  limpaComboBotoes3(){
+  $('#combolacunas').val('0');
+  $('#combocriticas').val('0');
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  apagaCC(){
+
+  var IDENT = 0;
+  if (document.getElementById("frameid").value){
+      IDENT = document.getElementById('frameid').value;
+  }
+
+  var sessaoobservacaoid = '00';
+  if (document.getElementById("sessaoobservacaoid")){
+      sessaoobservacaoid = document.getElementById("sessaoobservacaoid").value;
+  }
+
+  var atorid = 0;
+  if (document.getElementById("atorid")){
+      atorid = document.getElementById('atorid').value;
+  }
+
+  $.ajax({
+    //enctype: 'multipart/form-data',
+    url: '/md_CONFIGURACOES_CONTEXTUAIS/CARBONO_CONFIGURACOES_CONTEXTUAIS_ACTIONS.asp',
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+          'actions':'deletar',
+          'atorid':atorid,
+          'sessaoobservacaoid':sessaoobservacaoid,
+          'ID':IDENT           
+          },
+     success:function (resposta){
+      //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+      //console.log(resposta)
+      //$(strDESTINO).html(resposta);
+      msgmodal('AVISO', resposta, '');
+      abreFrame(sessaoobservacaoid,atorid,'01')
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+      ////console.log('Erro no processamento!');
+      //console.log(resposta);
+      //$(strDESTINO).html(resposta)
+      msgmodal('AVISO', resposta, '');
+    }
+  })
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  concluiCC(){
+
+  var IDENT = 0;
+  if (document.getElementById("frameid").value){
+      IDENT = document.getElementById('frameid').value;
+  }
+
+  var sessaoobservacaoid = '00';
+  if (document.getElementById("sessaoobservacaoid")){
+      sessaoobservacaoid = document.getElementById("sessaoobservacaoid").value;
+  }
+
+  var atorid = 0;
+  if (document.getElementById("atorid")){
+      atorid = document.getElementById('atorid').value;
+  }
+
+  var status = 'Finalizado';
+  
+  $.ajax({
+    //enctype: 'multipart/form-data',
+    url: '/md_SESSAO_OBSERVACAO/CARBONO_SESSAO_OBSERVACAO_ACTIONS.asp',
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+          'actions':'conclui',
+          'atorid':atorid,
+          'status':status,
+          'sessaoobservacaoid':sessaoobservacaoid,
+          'ID':IDENT           
+          },
+     success:function (resposta){
+      //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+      //console.log(resposta)
+      //$(strDESTINO).html(resposta);
+      msgmodal('AVISO', resposta, '');
+      abreFrame(sessaoobservacaoid,atorid,'01');
+   
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+      ////console.log('Erro no processamento!');
+      //console.log(resposta);
+      //$(strDESTINO).html(resposta)
+      msgmodal('AVISO', resposta, '');
+    }
+  })
+}    
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  reabriCC(){
+
+  var IDENT = 0;
+  if (document.getElementById("frameid").value){
+      IDENT = document.getElementById('frameid').value;
+  }
+
+  var sessaoobservacaoid = '00';
+  if (document.getElementById("sessaoobservacaoid")){
+      sessaoobservacaoid = document.getElementById("sessaoobservacaoid").value;
+  }
+
+  var atorid = 0;
+  if (document.getElementById("atorid")){
+      atorid = document.getElementById('atorid').value;
+  }
+
+  var status = 'Enviado';
+  
+  $.ajax({
+    //enctype: 'multipart/form-data',
+    url: '/md_SESSAO_OBSERVACAO/CARBONO_SESSAO_OBSERVACAO_ACTIONS.asp',
+    type: 'POST', // Tipo de requisição, podendo alterar para GET, POST, PUT , DELETE e outros metodos http
+    data: {
+          'actions':'reabre',
+          'atorid':atorid,
+          'status':status,
+          'sessaoobservacaoid':sessaoobservacaoid,
+          'ID':IDENT           
+          },
+     success:function (resposta){
+      //Bloco com a resposta do servidor caso a requisição ocorra normalmente
+      //console.log(resposta)
+      //$(strDESTINO).html(resposta);
+      msgmodal('AVISO', resposta, '');
+      abreFrame(sessaoobservacaoid,atorid,'01')
+    },
+    error: function (resposta){
+      //Entrará aqui caso não de certo a requisição 
+      ////console.log('Erro no processamento!');
+      //console.log(resposta);
+      //$(strDESTINO).html(resposta)
+      msgmodal('AVISO', resposta, '');
+    }
+  })
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  addFrame(intSessao,intAluno,intFrame){
+  if (document.getElementById('STATUS').value=='insert'){
+      msgmodal('Aviso!','Um novo frame já foi adicionado, grave o atual antes de inserir um novo frame!','')
+  }else{
+      ////console.log('actions '+document.getElementById("actions").value);
+      //document.getElementById("actions").value = "insert";
+      //$('#actions').val('insert');
+      ////console.log('actions '+document.getElementById("actions").value);
+      //$("#actions").val('insert');
+      carregaMetodo(intSessao,intAluno,intFrame,'insert')
+      //abreFrame(intSessao,intAluno,intFrame);
+      //$('#newbtn').show();
+      //$('#newbtn').hide();
+      $('#RESUMOFRAME').val('');
+      $('#Descframedirecionamento').val('');
+      $('#Descframecompreencao').val('');
+      $('#DescCaractFisica').val('');
+      $('#DescAcoes').val('');
+      $('#DescEstados').val('');
+      $('#DescCaractCenario').val('');
+      // document.getElementById("#dip").checked=false;
+      // document.getElementById("#desp").checked=false;
+      // document.getElementByName("#cdirh").checked=false;
+      // document.getElementByName("#cdipI1").checked=false;
+      // document.getElementByName("#cdipI2").checked=false;
+      $('#checkcompreencao').hide();
+      $('#textosframedirecionamento').hide();
+      $('#textosframecompreencao').hide();
+      $('#textosframe').hide();
+      $('#textosframecritica').hide();
+      $('#textosframegestosobservados').hide();
+      $('#textosframeturnofala').hide();
+      $('#checkindicadoresdiscursivos').hide();
+      $('#checkindicadoresgestuais').hide();
+      $('#STATUS').val('insert');
+  }
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  trocaClasse(elemento, antiga, nova) {
+  document.getElementByName(elemento).classList.remove(antiga);
+  document.getElementById(elemento).classList.add(nova);
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  sessoes_analisadas(intSessao,intAluno,intFrame,strfuncaoDestino){
+  console.log(''+intSessao+','+intAluno+','+intFrame+','+strfuncaoDestino)
+  switch(strfuncaoDestino) {
+    case 'SessaoAvaliacao':
+      // code block
+      carregaPagina('divsessoesanalisadas','/INCLUDES/sessoes_analisadas.asp',intSessao,intAluno,strfuncaoDestino);
+      abreVideo(intSessao,intAluno,intFrame);
+      carregaMetodo(intSessao,intAluno,intFrame,'update');
+      break;
+    case 'PraticasPedagogicas':
+      // code block
+      document.getElementById('sessaoobservacaoid').value=intSessao;
+      carregaPagina('divsessoesanalisadas','/INCLUDES/sessoes_analisadas.asp',intSessao,intAluno,strfuncaoDestino);
+      $('#navegamenu').hide();
+      $('#justificativapratica').show();
+      $('#caixachat').show();
+      $('#artefatospratica').show();
+      carregaPagina('justificativapratica','/INCLUDES/BOX_JUSTIFICATIVA_PRATICA.asp',intSessao,intAluno,'');
+      carregaPagina('artefatospratica','/INCLUDES/BOX_FILTRO_ARTEFATO_PRATICAS.asp',intSessao,intAluno,'');
+      carregaPagina('conteudochatpraticas','/md_pratica_pedagogica/chat_praticas.asp',intSessao,intAluno,'');
+      carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA.asp',intSessao,intAluno,11);
+      break;
+    case 'PraticasPedagogicasProfessor':
+      // code block
+      document.getElementById('sessaoobservacaoid').value=intSessao;
+      carregaPagina('divsessoesanalisadas','/INCLUDES/sessoes_analisadas.asp',intSessao,intAluno,strfuncaoDestino);
+      $('#navegamenu').hide();
+      $('#justificativapratica').show();
+      // $('#caixachat').show();
+      $('#artefatospratica').show();
+      carregaPagina('justificativapratica','/INCLUDES/BOX_JUSTIFICATIVA_PRATICA_PROFESSOR.asp',intSessao,intAluno,'');
+      carregaPagina('artefatospratica','/INCLUDES/BOX_FILTRO_ARTEFATO_PRATICAS_CATEGORIA.asp',intSessao,intAluno,'');
+      //carregaPagina('conteudochatpraticas','/md_pratica_pedagogica/chat_praticas.asp',intSessao,intAluno,'');
+      carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFESSOR.asp',intSessao,intAluno,111);
+      break;
+    case 'PraticaProfissional':
+      // code block
+      document.getElementById('sessaoobservacaoid').value=intSessao;
+      carregaPagina('divsessoesanalisadas','/INCLUDES/sessoes_analisadas.asp',intSessao,intAluno,strfuncaoDestino);
+      $('#navegamenu').hide();
+      $('#justificativapratica').show();
+      $('#caixachat').show();
+      $('#artefatospratica').show();
+      carregaPagina('justificativapratica','/INCLUDES/BOX_JUSTIFICATIVA_PRATICA.asp',intSessao,intAluno,'');
+      carregaPagina('artefatospratica','/INCLUDES/BOX_FILTRO_ARTEFATO_PRATICAS_PROFISSIONAIS.asp',intSessao,intAluno,'');
+      carregaPagina('conteudochatpraticas','/md_PRATICA_PROFISSIONAL/chat_praticas.asp',intSessao,intAluno,'');
+      carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_PRATICA_PROFISSIONAL.asp',intSessao,intAluno,39);
+      break;
+    case 'indicadores': 
+      //////console.log('sessao:'+intSessao,'aluno'+intAluno,'funcao'+strfuncaoDestino)
+      carregaPagina('btncategoriaindicadores','/INCLUDES/BOX_BOTAO_CATEGORIA_INDICADORES.ASP',intSessao,intSessao,intAluno);
+      carregaPagina('divsessoesanalisadas','/INCLUDES/sessoes_analisadas.asp',intSessao,intAluno,strfuncaoDestino);
+      carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_INDICADORES.asp',intSessao,intAluno,19);
+      break; 
+    case 'Graficosindicadores': 
+      //////console.log('sessao:'+intSessao,'aluno'+intAluno,'funcao'+strfuncaoDestino)
+      carregaPagina('btncategoriaindicadores','/INCLUDES/BOX_BOTAO_CATEGORIA_GRAFICO_INDICADORES.ASP',intSessao,intSessao,intAluno);
+      carregaPagina('divsessoesanalisadas','/INCLUDES/sessoes_analisadas.asp',intSessao,intAluno,strfuncaoDestino);
+      carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_INDICADORES.asp',intSessao,intAluno,20);
+      break;  
+      
+    case 'familia':
+      //$('#sessaoobservacaoid').val(intSessao);
+      // $('#detalhepraticafamilia').hide(); 
+      // $('#navegamenu').html('');
+      // carregaPagina('divsessoesanalisadas','/INCLUDES/sessoes_analisadas.asp',intSessao,intAluno,strfuncaoDestino);
+      // carregaPagina('detalhesessaofamilia','/INCLUDES/BOX_DETALHE_SESSAO_FAMILIA.ASP',intSessao,intAluno,strfuncaoDestino);
+      // carregaPagina('menusuperiordireito','/INCLUDES/BOX_MENU_SUPERIOR_FAMILIA.asp',intSessao,intAluno,37);
+      // $('#detalhesessaofamilia').show();
+      // $('#caixachat').show();
+      submetePagina('','/md_pratica_pedagogica/pratica_pedagogica_PAI_ALUNO.ASP',intSessao,intAluno,'','',28)
+      break;
+    default:
+      // code blockblock
+      break;
+  }
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  limpaBotoesFuncionais(){
+  //msgmodal('AVISO', 'Limpando os botões funcionais... ', '');
+  inputfields = document.getElementsByName("indicadoresid");
+  ar_inputflds = inputfields.length;
+  var indicadoresid = 0;
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'radio' && inputfields[i].checked == true){
+      inputfields[i].checked = false;
+    }
+  }
+  inputfields = document.getElementsByName("trocascomunicativasid");
+  ar_inputflds = inputfields.length;
+  var trocascomunicativasid = 0;
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'radio' && inputfields[i].checked == true){
+      inputfields[i].checked = false;
+      }
+  }
+  inputfields = document.getElementsByName("tipoframeid");
+  ar_inputflds = inputfields.length;
+  var tipoframeid = 0;
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'radio' && inputfields[i].checked == true){
+      inputfields[i].checked = false;
+      }
+  }
+  inputfields = document.getElementsByName("discursoid");
+  ar_inputflds = inputfields.length;
+  var discursoid = 0;
+  for (var i = 0; i < ar_inputflds; i++) {
+    if (inputfields[i].type == 'radio' && inputfields[i].checked == true){
+      inputfields[i].checked = false;
+    }
+  }
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  janela(URL,L,A,barra,tools){
+    // declara as vari veis
+    // quando uma vari vel n o for uma caracter stica de um objeto.
+    var scrol
+    var htal
+    var vcal
+    // fim da declara  o
+    // verifica se o valor do tamanho da janela   igual a zero
+    // verifica largura
+    if (L=='0'){
+    L= screen.width;
+    }
+    // verifica altura
+    if (A=='0'){
+    A= screen.height;
+    }
+    // recebe a altura da janela
+    var height = A;
+    // recebe a largura da janela
+    var width = L;
+    // recebe o balor e diz se tem ou n o barra de rolagem
+    var scrol = barra;
+      if (scrol == ''){
+      scrol = 'no';
+      }
+    // recebe o valor e adiciona ou n o a barra de ferramentas
+    var tool = tools;
+      if (tool == ''){
+      tool = 'no';
+    }
+    // htal <-- recebe a metade da largura da janela menos a metade do tamanho da janela
+    htal = ( screen.width / 2 ) - ( L / 2 );
+    // htal <-- recebe a metade da altura da janela menos a metade do tamanho da janela
+    vcal = ( screen.height / 2 ) - ( A / 2 );
+    window.open (URL,'Pop_UP','width='+width+',height='+height+',left='+htal+',top='+vcal+',toolbar='+tool+',location=no,status=no,menu=no,scrollbars='+scrol+',resizable=no,titlebar=no');	
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  verificaForcaSenha(){
+	var numeros = /([0-9])/;
+	var alfabetoa = /([a-z])/;
+	var alfabetoA = /([A-Z])/;
+	var chEspeciais = /([~,!,@,#,$,%,^,&,*,-,_,+,=,?,>,<])/;
+
+
+  // 	if($('#SENHA').val().length < 8) 
+  //     {
+  //         $('#password-status').html("<span style='color:red'>&nbsp;Senha Fraca</span>");
+  //     } else {  	
+  //         if($('#SENHA').val().match(numeros) && $('#SENHA').val().match(alfabetoa) && $('#SENHA').val().match(alfabetoA) && $('#SENHA').val().match(chEspeciais))
+  //         {            
+  //           $('#password-status').html("<span style='color:green'><b>&nbsp;Senha Forte</b></span>");
+  //         } else {
+  //           $('#password-status').html("<span style='color:orange'>&nbsp;Senha Média</span>");
+  //         }
+  // 	}
+
+
+  //Pegar id da lista
+  const lista = document.getElementById('password-strength');
+  $('#password-strength').html("");
+  //Criar elemento para cada campo
+  const tamanho   = document.createElement('li');
+  const maiuscula = document.createElement('li');
+  const minuscula = document.createElement('li');
+  const numero    = document.createElement('li');
+  const especiais = document.createElement('li');
+
+  //Atribuir valores para cada elemento
+  tamanho.innerHTML   = "No mínimo 8 caracteres;";
+  maiuscula.innerHTML = "Letras Maiúsculas;";
+  minuscula.innerHTML = "Letras Minúsculas;";
+  numero.innerHTML    = "Números de 0 a 9;";
+  especiais.innerHTML = "Caractere Especial;";
+
+  //Adicionar cada elemento na lista ul
+  // lista.appendChild(tamanho);
+  // lista.appendChild(maiuscula);
+  // lista.appendChild(minuscula);
+  // lista.appendChild(numero   );
+  // lista.appendChild(especiais);
+
+
+  var password = $('#SENHA').val();
+  var strength = 0;
+  var tips = "";
+
+  // Check password length
+  if (password.length < 8) {
+    tips += "No mínimo 8 caracteres;";
+    lista.appendChild(tamanho);
+    // lista.appendChild(maiuscula);
+    // lista.appendChild(minuscula);
+    // lista.appendChild(numero   );
+    // lista.appendChild(especiais);
+  } else {
+    strength += 1;
+  }
+
+  // Check for maxed case
+  if (password.match(/[A-Z]/) && password.match(/[A-Z]/)) {
+    strength += 1;
+  } else {
+    tips += "Letras Maiúsculas;";
+    // lista.appendChild(tamanho);
+    lista.appendChild(maiuscula);
+    // lista.appendChild(minuscula);
+    // lista.appendChild(numero   );
+    // lista.appendChild(especiais);  
+  }
+
+  // Check for mixed case
+  if (password.match(/[a-z]/) && password.match(/[A-Z]/)) {
+    strength += 1;
+  } else {
+    tips += "Letras Minúsculas;";
+    // lista.appendChild(tamanho);
+    // lista.appendChild(maiuscula);
+    lista.appendChild(minuscula);
+    // lista.appendChild(numero   );
+    // lista.appendChild(especiais);  
+  }
+
+  // Check for numbers
+  if (password.match(/\d/)) {
+    strength += 1;
+  } else {
+    tips += "Números de 0 a 9;";
+    // lista.appendChild(tamanho);
+    // lista.appendChild(maiuscula);
+    // lista.appendChild(minuscula);
+    lista.appendChild(numero   );
+    // lista.appendChild(especiais);  
+  }
+
+  // Check for special characters
+  if (password.match(/[^a-zA-Z\d]/)) {
+    strength += 1;
+  } else {
+    tips += "Caractere Especial;";
+    // lista.appendChild(tamanho);
+    // lista.appendChild(maiuscula);
+    // lista.appendChild(minuscula);
+    // lista.appendChild(numero   );
+    lista.appendChild(especiais);  
+  }
+
+  // Update the text and color based on the password strength
+  var passwordStrengthElement = $('#password-strength');
+  var passwordStatusElement = $('#password-status');
+
+  if (strength < 3) {
+  passwordStatusElement.text("Senha Fraca");
+  passwordStatusElement.css('color', 'red');
+  //passwordStrengthElement.text(tips);
+  
+  } else if (strength === 3) {
+    passwordStatusElement.text("Senha Mediana");
+    passwordStatusElement.css('color', 'orange');
+    // passwordStrengthElement.text(tips);
+  } else if (strength === 4) {
+    passwordStatusElement.text("Senha Forte" );
+    passwordStatusElement.css('color', 'black');
+    // passwordStrengthElement.text(tips);
+  } else {
+    passwordStatusElement.text("Senha Muito Forte ");
+    passwordStatusElement.css('color', 'green');
+    // passwordStrengthElement.text(tips);
+  }
+
+}
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  apagaarquivo(localExibicao,strNomeArquivo,strNomeArquivoHidden,strRetorno){
+
+    $.ajax({
+        url: '/md_arquivos/deleta/', // Url do lado server que vai receber o arquivo
+        data: {'filename' : strNomeArquivo},
+        type: 'POST',
+         success:function  (data) {
+            // utilizar o retorno
+            console.log(data);
+            if (strNomeArquivoHidden !== ''){
+              $('#'+strNomeArquivoHidden).val('');
+            }
+            if (strRetorno !== ''){
+              $('#'+localExibicao).html('<i class="bi-file-earmark-x-fill"></i> '+ data +' </i> ')
+            }
+          },
+          error: function (data){
+            //Entrará aqui caso não de certo a requisição
+            console.log(data);
+            if (strRetorno !== ''){
+              // $('#'+localExibicao).html('FALHA NA EXCLUSÃO!');
+              msgmodal('AVISO!', 'FALHA NA EXCLUSÃO!', ''); // Mensagem de aviso
+            }
+        }
+    });
+};
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  enviaarquivos(localExibicao,strNomeArquivo,strNomeArquivoHidden){
+   // Verifica se um arquivo foi selecionado
+   var fileInput = $('#'+strNomeArquivo)[0]; // Obtém o input de upload de arquivo
+   var file = fileInput.files[0]; // Pega o primeiro arquivo selecionado
+
+   if (!file) {
+       msgmodal('AVISO!', 'Por favor, selecione um arquivo.', ''); // Mensagem de aviso
+       return;
+   } else {
+       $('#'+localExibicao).html('<img class="caixa" width="200" src="/images/carregando1.gif">'); // Imagem de carregando
+
+       // Cria um objeto FormData para armazenar o arquivo e enviar via AJAX
+       var formData = new FormData();
+       formData.append('arquivo', file); // Adiciona o arquivo ao FormData
+       
+       // Envia o formulário via AJAX usando jQuery
+       $.ajax({
+           url: '/md_ARQUIVOS/UPLOAD/', // Endpoint no servidor que processa o upload
+           type: 'POST',
+           data: formData,
+           processData: false,
+           contentType: false,
+           enctype: 'multipart/form-data',
+           success: function (response) {
+               // Exibe a resposta do servidor no div #result
+               $('#'+localExibicao).html('<img class="caixa col-md-6" src="/md_ARQUIVOS/UPLOAD/deposito/'+response+'">'); // Imagem de carregando
+               if(strNomeArquivoHidden !==''){
+                 $('#'+strNomeArquivoHidden).val(response);
+               }
+               msgmodal('AVISO!', 'Arquivo Enviado.', ''); // Mensagem de aviso
+           },
+           error: function (xhr, status, error) {
+               // Exibe uma mensagem de erro e imprime detalhes no console
+               console.error('Erro no envio do arquivo:', xhr.responseText, status, error);
+               msgmodal('AVISO!', 'Erro no envio do arquivo.', ''); // Mensagem de aviso
+           }
+       });
+
+   }
+};
+/* 
+*@description 	Descrição da Função JS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function  redimensionaarquivos(strNomeArquivo,intLargura,intAltura){
+      // Envia o formulário via AJAX usando jQuery
+      // Cria um novo objeto FormData para enviar o arquivo e os parâmetros adicionais
+      var formData = new FormData();
+
+      // Adiciona outros parâmetros ao FormData
+      formData.append('filename', strNomeArquivo); // Nome do arquivo (se for diferente do input file)
+      formData.append('largura', intLargura); // Largura desejada
+      formData.append('altura', intAltura); // Altura desejada
+
+      // Envia o formulário via AJAX usando jQuery
+      $.ajax({
+          url: '/md_ARQUIVOS/redimensiona/', // Endpoint no servidor que processa o upload
+          type: 'POST',
+          data: formData, // Enviar o FormData
+          success: function (response) {
+              // Exibe a resposta do servidor no console ou em um div
+              console.log('Sucesso no redimensionamento!', response);
+          },
+          error: function (xhr, status, error) {
+              // Exibe uma mensagem de erro e imprime detalhes no console
+              console.error('Erro no envio do arquivo:', xhr.responseText, status, error);
+          }
+      });
+  };
+
+/* 
+*@description 	Retorna um vídeo na AWS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function RecuperaVideoAWS(strUrl,strDestino){
+  // Configura as credenciais da AWS
+  AWS.config.update({
+      accessKeyId: '123123123123',
+      secretAccessKey: '123123123',
+      region: 'us-east-2'
+  });
+  // // Cria uma instância do objeto S3 da AWS
+  var s3 = new AWS.S3();
+  // Função para obter a URL do arquivo no S3
+  var params = {
+  Bucket: 'cognvox-video2/Compositions',
+  Key: strUrl,
+  Expires: 4000
+  };
+  s3.getSignedUrl('getObject', params, function (err, url) {
+  if (err) {
+      console.log('Erro ao obter URL assinada', err);
+  } else {
+      // Aqui você pode usar o URL assinado para configurar o vídeo
+      document.getElementById(strDestino).src = url;
+      // console.log('URL assinada:', url);
+  }
+  });  
+  
+}  
+
+/* 
+*@description 	Retorna um vídeo na AWS
+*@				
+*@author			  André Ribeiro arer76@hotmail.com
+*@data          16/08/2019
+*@param         definição de parâmetros de houver
+*/
+function RecuperaArquivoAWS(strUrl,strDestino,strTipoDestino){
+  // Configura as credenciais da AWS
+  AWS.config.update({
+      accessKeyId: '123',
+      secretAccessKey: '213',
+      region: 'us-east-2'
+  });
+  // // Cria uma instância do objeto S3 da AWS
+  var s3 = new AWS.S3();
+  // Função para obter a URL do arquivo no S3
+  var params = {
+  Bucket: 'cognvox-video2/Compositions',
+  Key: strUrl,
+  Expires: 4000
+  };
+  s3.getSignedUrl('getObject', params, function (err, url) {
+  if (err) {
+      console.log('Erro ao obter URL assinada', err);
+  } else {
+      // Aqui você pode usar o URL assinado para configurar o vídeo
+      switch (strTipoDestino) {
+        case 'src':
+          
+          document.getElementById(strDestino).src = url;
+          break;
+      
+        case 'value':
+          
+          document.getElementById(strDestino).value = url;
+          break;
+      
+        case 'href':
+          
+          document.getElementById(strDestino).href = url;
+          break;
+      
+        case 'onclick':
+          
+          document.getElementById(strDestino).onclick = url;
+          break;
+      
+        default:
+          break;
+      }
+      // console.log('URL assinada:', url);
+  }
+  });  
+  
+}  

@@ -1,0 +1,50 @@
+/* 
+@description 	ABERTURA DE JANELA E POSICIONAMNENTO AO CENTRO DA TELA.
+@param1			<str>			<URL de destino>
+@param2			<int>			<Largura da Janela>
+@param3			<int>			<Altura da Janela>
+@param4			<str>			<Exibe a barra de rolagem>
+@param5			<str>			<Exibe a barra de ferramentas>
+@author			André Ribeiro	arer76@hotmail.com
+
+				Ex.: function janela('janela.html',400,400,<<auto/yes/no>>,<<yes/no>>)
+*/
+
+	function janela(URL,L,A,barra,tools)
+	{
+	// declara as variáveis
+	// quando uma variável não for uma característica de um objeto.
+	var scrol
+	var htal
+	var vcal
+	// fim da declaração
+	// verifica se o valor do tamanho da janela é igual a zero
+	// verifica largura
+	if (L=='0'){
+	L= screen.width;
+	}
+	// verifica altura
+	if (A=='0'){
+	A= screen.height;
+	}
+	// recebe a altura da janela
+	var height = A;
+	// recebe a largura da janela
+	var width = L;
+	// recebe o balor e diz se tem ou não barra de rolagem
+	var scrol = barra;
+		if (scrol == ''){
+		scrol = 'no';
+		}
+	// recebe o valor e adiciona ou não a barra de ferramentas
+	var tool = tools;
+		if (tool == ''){
+		tool = 'no';
+	}
+	// htal <-- recebe a metade da largura da janela menos a metade do tamanho da janela
+	htal = ( screen.width / 2 ) - ( L / 2 );
+	// htal <-- recebe a metade da altura da janela menos a metade do tamanho da janela
+	vcal = ( screen.height / 2 ) - ( A / 2 );
+	window.open (URL,'Pop_UP','width='+width+',height='+height+',left='+htal+',top='+vcal+',toolbar='+tool+',location=no,status=no,menu=no,scrollbars='+scrol+',resizable=no,titlebar=no');	
+	}
+	// -->

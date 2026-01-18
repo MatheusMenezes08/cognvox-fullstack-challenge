@@ -1,0 +1,17 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: cognvox-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: cognvox
+      MYSQL_USER: cognvox_user
+      MYSQL_PASSWORD: cognvox_pass
+      MYSQL_ROOT_PASSWORD: root_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
