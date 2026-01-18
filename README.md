@@ -54,6 +54,9 @@ flask db migrate -m "create users table"
 flask db upgrade
 ```
 
+Observacao:
+- A pasta `backend/migrations/` também está no repositorio atendendo ao requisito de criacao de tabelas.
+
 ## Frontend
 
 ### Pre-requisitos
